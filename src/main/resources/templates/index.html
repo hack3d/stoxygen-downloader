@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Stoxygen - Downloader</title>
+    <link rel="stylesheet" href="/bootstrap-4.1.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/sticky-footer-navbar/sticky-footer-navbar.css" />
+    <link rel="stylesheet" href="/font_awesome-5.1.0/css/fontawesome-all.min.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="bondsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" href="#">Bonds</a>
+                        <div class="dropdown-menu" aria-labelledby="bondsDropdown">
+                            <a class="dropdown-item" href="/bonds">Overview</a>
+                            <a class="dropdown-item" href="/bonds/add">Add</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="exchangesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" href="#">Exchanges</a>
+                        <div class="dropdown-menu" aria-labelledby="exchangesDropdown">
+                            <a class="dropdown-item" href="/exchanges">Overview</a>
+                            <a class="dropdown-item" href="/exchanges/add">Add</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="container" role="main">
+        <p>Welcome to Stoxygen-Downloader!</p>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            (c) 2018 Stoxygen GmbH
+        </div>
+    </footer>
+    <script src="/jquery/jquery-3.3.1.min.js"></script>
+    <script src="/bootstrap-4.1.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
