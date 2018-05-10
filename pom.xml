@@ -73,6 +73,7 @@
         <profile>
             <id>test</id>
         </profile>
+
     </profiles>
     <repositories>
         <repository>

@@ -25,4 +25,5 @@ hs_err_pid*
 target/
 logs/
 .idea/
-src/main/resources/application.properties
+src/main/resources/application-prod.properties
+src/main/resources/application-dev.properties
