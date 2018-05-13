@@ -4,6 +4,11 @@
 #
 version: 2
 jobs:
+  set-version:
+    <<: *defaults
+    steps:
+      - run: mkdir -p workspace
+      - run: git describe --tags `git rev-list --tags --max-count=1` > workspace/app_version
   build:
     docker:
       # specify the version you desire here
@@ -38,10 +43,22 @@ jobs:
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
       # run tests!
-      - run: mvn clean package -P test
+      - run: mvn clean package -Ptest -Dspring.profiles.active=test
 
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
                 path: target/surefire-reports
 
       - store_artifacts:
-                path: target/surefire-reports
+                path: target/
+
+workflows:
+  version: 2
+  build-release:
+    jobs:
+      - build:
+        filters:
+          tags:
+            only: /^v.*/
+  build-snapshot:
+    jobs:
+      - build
