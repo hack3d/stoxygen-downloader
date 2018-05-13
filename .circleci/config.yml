@@ -5,7 +5,6 @@
 version: 2
 jobs:
   set-version:
-    <<: *defaults
     steps:
       - run: mkdir -p workspace
       - run: git describe --tags `git rev-list --tags --max-count=1` > workspace/app_version
