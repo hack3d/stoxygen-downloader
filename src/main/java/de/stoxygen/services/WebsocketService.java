@@ -83,7 +83,7 @@ public class WebsocketService implements WebsocketListener {
                         jarr.getJSONArray(1).getDouble(6), jarr.getJSONArray(1).getDouble(7),
                         jarr.getJSONArray(1).getDouble(8), jarr.getJSONArray(1).getInt(9));
                 String crypto_pair = getChannelIDs().get(jarr.getInt(0));
-                Bond bond = bondRepository.findByCryptoPair(crypto_pair);
+                Bond bond = bondRepository.findByCryptoPair(crypto_pair.toLowerCase());
                 Exchange exchange = exchangeRepository.findOne(exchangesId);
                 TickdataCurrent tickdataCurrent = new TickdataCurrent((float)jarr.getJSONArray(1).getDouble(0),
                         (float)jarr.getJSONArray(1).getDouble(2), (float)jarr.getJSONArray(1).getDouble(8),

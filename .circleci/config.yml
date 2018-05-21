@@ -4,10 +4,6 @@
 #
 version: 2
 jobs:
-  set-version:
-    steps:
-      - run: mkdir -p workspace
-      - run: git describe --tags `git rev-list --tags --max-count=1` > workspace/app_version
   build:
     docker:
       # specify the version you desire here
@@ -49,15 +45,3 @@ jobs:
 
       - store_artifacts:
                 path: target/
-
-workflows:
-  version: 2
-  build-release:
-    jobs:
-      - build:
-        filters:
-          tags:
-            only: /^v.*/
-  build-snapshot:
-    jobs:
-      - build

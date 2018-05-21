@@ -13,7 +13,7 @@ import java.util.List;
 public interface BondRepository extends CrudRepository<Bond, Integer> {
     List<Bond> findByIsin(String isin);
 
-    List<Bond> findByState(Integer state);
+    Bond findByState(Integer state);
 
     Bond findByCryptoPair(String cryptoPair);
 

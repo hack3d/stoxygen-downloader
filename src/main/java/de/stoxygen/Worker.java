@@ -8,13 +8,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @Component
@@ -38,6 +38,8 @@ public class Worker {
 
     @Autowired
     private WebsocketClient wss;
+
+    private ArrayList<String> cryptoPairs;
 
     @Scheduled(cron = "0 0 */1 * * ?")
     public void checkBitfinexSymbols() {
@@ -72,9 +74,41 @@ public class Worker {
         logger.info("End - checkUnusedCryptoPairs");
     }
 
+    @Scheduled(initialDelay=5000, fixedRate=5000)
+    public void addCryptoPairs() {
+        AtomicBoolean found = new AtomicBoolean(false);
+        Iterator<String> iter = cryptoPairs.iterator();
+        final String[] curItem = new String[1];
+
+        Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
+
+        exchange.getBonds().forEach( bond -> {
+            while (iter.hasNext() == true) {
+                curItem[0] = (String) iter.next();
+                if(curItem[0].equals(bond.getCryptoPair())) {
+                    found.set(true);
+                    break;
+                }
+            }
+
+            if (found.get()) {
+                String sym = "t" + bond.getCryptoPair().toUpperCase();
+                JSONObject obj = new JSONObject();
+                obj.put("event", "subscribe");
+                obj.put("channel", "ticker");
+                obj.put("symbol", sym);
+                String message = obj.toString();
+                logger.debug("Websocket send message: {}", message);
+                wss.send(message);
+            }
+        });
+
+    }
+
     public void setupWebsocket() {
         Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
         logger.debug("Exchange[Id: {}, Name: {}, Symbol: {}]", exchange.getExchangesId(), exchange.getName(), exchange.getSymbol());
+        cryptoPairs = new ArrayList<String>();
 
         try {
             //wss = new WebsocketClient(new URI(stoxygenConfig.getExchange_wssurl()), exchange.getExchangesId());
@@ -88,26 +122,23 @@ public class Worker {
                 TimeUnit.SECONDS.sleep(1);
 
             }
-            WebsocketClient finalWss = wss;
+            //WebsocketClient finalWss = wss;
+            logger.debug("Websocket state: {}", wss.getReadyState());
             exchange.getBonds().forEach(bond -> {
+                cryptoPairs.add(bond.getCryptoPair());
                 String sym = "t" + bond.getCryptoPair().toUpperCase();
+                logger.debug("Symbol {}", sym);
                 JSONObject obj = new JSONObject();
                 obj.put("event", "subscribe");
                 obj.put("channel", "ticker");
                 obj.put("symbol", sym);
                 String message = obj.toString();
                 logger.debug("Websocket send message: {}", message);
-                finalWss.send(message);
+                wss.send(message);
                 logger.debug("{}", bond.toString());
             });
 
 
-
-        /*
-        } catch (URISyntaxException e) {
-            logger.error("Exception: {}", e);
-            e.printStackTrace();
-        */
         } catch (InterruptedException e) {
             logger.error("Exception: {}", e);
             e.printStackTrace();
