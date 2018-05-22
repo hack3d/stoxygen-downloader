@@ -82,16 +82,25 @@ public class Worker {
 
         Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
 
+        logger.debug("Size of bonds: {}", exchange.getBonds().size());
         exchange.getBonds().forEach( bond -> {
+            logger.debug("Check crypto pair: {}", bond.getCryptoPair());
+            /*
             while (iter.hasNext() == true) {
                 curItem[0] = (String) iter.next();
+                logger.debug("Current crypto pair from subscribed list: {}", curItem[0]);
                 if(curItem[0].equals(bond.getCryptoPair())) {
-                    found.set(true);
+                    //found.set(true);
                     break;
+                } else {
+                    found.set(true);
                 }
             }
+            */
 
-            if (found.get()) {
+            if (!cryptoPairs.contains(bond.getCryptoPair())) {
+                logger.info("Crypto pair {} not found in list. Subscribe it!", bond.getCryptoPair());
+                cryptoPairs.add(bond.getCryptoPair());
                 String sym = "t" + bond.getCryptoPair().toUpperCase();
                 JSONObject obj = new JSONObject();
                 obj.put("event", "subscribe");
