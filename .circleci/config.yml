@@ -66,8 +66,8 @@ workflows:
             tags:
               only: /^v.*/
       - publish_release:
-        requires:
-          - build
+          requires:
+            - build
   snapshot:
     jobs:
       - build:
