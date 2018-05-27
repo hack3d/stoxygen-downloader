@@ -9,9 +9,10 @@ jobs:
     dependencies:
         pre:
           - go get -u github.com/tcnksm/ghr
+    working_directory: ~/repo
     steps:
       # Push release
-      - run: cd ~/repo/target/artifacts && ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
+      - run: cd ~/repo/target/artifacts && ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build
 
   build:
     docker:
@@ -53,8 +54,7 @@ jobs:
                 path: target/surefire-reports
 
       - store_artifacts:
-                path: target
-                dest: target/artifacts
+                path: build
 
 
 workflows:

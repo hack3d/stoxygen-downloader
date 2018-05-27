@@ -76,6 +76,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>build</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -85,6 +95,9 @@
         </profile>
         <profile>
             <id>dev</id>
+        </profile>
+        <profile>
+            <id>prod</id>
         </profile>
     </profiles>
     <repositories>
