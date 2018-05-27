@@ -1,9 +1,16 @@
 package de.stoxygen;
 
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.ChannelEventListener;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionStateChange;
 import de.stoxygen.model.Exchange;
 import de.stoxygen.repository.BondRepository;
 import de.stoxygen.repository.ExchangeRepository;
 import de.stoxygen.services.MailService;
+import de.stoxygen.services.WebsocketService;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +45,9 @@ public class Worker {
 
     @Autowired
     private WebsocketClient wss;
+
+    @Autowired
+    private WebsocketService websocketService;
 
     private ArrayList<String> cryptoPairs;
 
@@ -76,81 +86,109 @@ public class Worker {
 
     @Scheduled(initialDelay=5000, fixedRate=5000)
     public void addCryptoPairs() {
-        AtomicBoolean found = new AtomicBoolean(false);
-        Iterator<String> iter = cryptoPairs.iterator();
-        final String[] curItem = new String[1];
+        // Only handle if exchange is 'btfx'
+        if(stoxygenConfig.getExchange().equals("btfx")) {
+            Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
 
-        Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
+            logger.debug("Size of bonds: {}", exchange.getBonds().size());
+            exchange.getBonds().forEach( bond -> {
+                logger.debug("Check crypto pair: {}", bond.getCryptoPair());
 
-        logger.debug("Size of bonds: {}", exchange.getBonds().size());
-        exchange.getBonds().forEach( bond -> {
-            logger.debug("Check crypto pair: {}", bond.getCryptoPair());
-            /*
-            while (iter.hasNext() == true) {
-                curItem[0] = (String) iter.next();
-                logger.debug("Current crypto pair from subscribed list: {}", curItem[0]);
-                if(curItem[0].equals(bond.getCryptoPair())) {
-                    //found.set(true);
-                    break;
-                } else {
-                    found.set(true);
+                if (!cryptoPairs.contains(bond.getCryptoPair())) {
+                    logger.info("Crypto pair {} not found in list. Subscribe it!", bond.getCryptoPair());
+                    cryptoPairs.add(bond.getCryptoPair());
+                    String sym = "t" + bond.getCryptoPair().toUpperCase();
+                    JSONObject obj = new JSONObject();
+                    obj.put("event", "subscribe");
+                    obj.put("channel", "ticker");
+                    obj.put("symbol", sym);
+                    String message = obj.toString();
+                    logger.debug("Websocket send message: {}", message);
+                    wss.send(message);
                 }
-            }
-            */
-
-            if (!cryptoPairs.contains(bond.getCryptoPair())) {
-                logger.info("Crypto pair {} not found in list. Subscribe it!", bond.getCryptoPair());
-                cryptoPairs.add(bond.getCryptoPair());
-                String sym = "t" + bond.getCryptoPair().toUpperCase();
-                JSONObject obj = new JSONObject();
-                obj.put("event", "subscribe");
-                obj.put("channel", "ticker");
-                obj.put("symbol", sym);
-                String message = obj.toString();
-                logger.debug("Websocket send message: {}", message);
-                wss.send(message);
-            }
-        });
-
+            });
+        }
     }
 
     public void setupWebsocket() {
-        Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
-        logger.debug("Exchange[Id: {}, Name: {}, Symbol: {}]", exchange.getExchangesId(), exchange.getName(), exchange.getSymbol());
-        cryptoPairs = new ArrayList<String>();
+        // Only handle if exchange is 'btfx'
+        if(stoxygenConfig.getExchange().equals("btfx")) {
+            Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
+            logger.debug("Exchange[Id: {}, Name: {}, Symbol: {}]", exchange.getExchangesId(), exchange.getName(), exchange.getSymbol());
+            cryptoPairs = new ArrayList<String>();
 
-        try {
-            //wss = new WebsocketClient(new URI(stoxygenConfig.getExchange_wssurl()), exchange.getExchangesId());
-            wss.connect();
-            logger.debug("Websocket state: {}", wss.getReadyState());
+            try {
+                wss.connect();
+                logger.debug("Websocket state: {}", wss.getReadyState());
 
 
-            // Check if websocket connection is open.
-            while (!wss.isOpen()) {
-                logger.debug("Connection to websocket-server is not open yet!");
-                TimeUnit.SECONDS.sleep(1);
+                // Check if websocket connection is open.
+                while (!wss.isOpen()) {
+                    logger.debug("Connection to websocket-server is not open yet!");
+                    TimeUnit.SECONDS.sleep(1);
 
+                }
+
+                logger.debug("Websocket state: {}", wss.getReadyState());
+                exchange.getBonds().forEach(bond -> {
+                    cryptoPairs.add(bond.getCryptoPair());
+                    String sym = "t" + bond.getCryptoPair().toUpperCase();
+                    logger.debug("Symbol {}", sym);
+                    JSONObject obj = new JSONObject();
+                    obj.put("event", "subscribe");
+                    obj.put("channel", "ticker");
+                    obj.put("symbol", sym);
+                    String message = obj.toString();
+                    logger.debug("Websocket send message: {}", message);
+                    wss.send(message);
+                    logger.debug("{}", bond.toString());
+                });
+
+
+            } catch (InterruptedException e) {
+                logger.error("Exception: {}", e);
+                e.printStackTrace();
             }
-            //WebsocketClient finalWss = wss;
-            logger.debug("Websocket state: {}", wss.getReadyState());
-            exchange.getBonds().forEach(bond -> {
-                cryptoPairs.add(bond.getCryptoPair());
-                String sym = "t" + bond.getCryptoPair().toUpperCase();
-                logger.debug("Symbol {}", sym);
-                JSONObject obj = new JSONObject();
-                obj.put("event", "subscribe");
-                obj.put("channel", "ticker");
-                obj.put("symbol", sym);
-                String message = obj.toString();
-                logger.debug("Websocket send message: {}", message);
-                wss.send(message);
-                logger.debug("{}", bond.toString());
+        }
+
+        // Only handle if exchange is 'btsp'
+        if(stoxygenConfig.getExchange().equals("btsp")) {
+            //PusherOptions options = new PusherOptions().setCluster("stoxygen-downloader");
+            Pusher pusher = new Pusher("de504dc5763aeef9ff52");
+            pusher.connect(new ConnectionEventListener() {
+                @Override
+                public void onConnectionStateChange(ConnectionStateChange connectionStateChange) {
+                    logger.debug("State changed to {} from {}", connectionStateChange.getCurrentState(), connectionStateChange.getPreviousState());
+                }
+
+                @Override
+                public void onError(String s, String s1, Exception e) {
+                    logger.error("There was a problem connection! Message: {}; Exception: {}", s, e.getMessage());
+                }
             });
 
+            Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
+            final Channel[] channel = new Channel[1];
+            exchange.getBonds().forEach(bond -> {
+                String channel_str = "live_trades_";
+                channel_str = channel_str + bond.getCryptoPair().toLowerCase();
+                logger.info("Channel: {}", channel_str);
+                channel[0] = pusher.subscribe(channel_str);
+            });
 
-        } catch (InterruptedException e) {
-            logger.error("Exception: {}", e);
-            e.printStackTrace();
+            //Channel channel = pusher.subscribe("live_trades_etheur");
+            channel[0].bind("trade", new ChannelEventListener() {
+                @Override
+                public void onSubscriptionSucceeded(String s) {
+                    logger.info("Subscribed to channel: {}", s);
+                }
+
+                @Override
+                public void onEvent(String s, String s1, String s2) {
+                    logger.info("Channel: {}; Data received {}", s, s2);
+                    websocketService.handleBtspData(s2, exchange.getExchangesId(), s);
+                }
+            });
         }
 
     }

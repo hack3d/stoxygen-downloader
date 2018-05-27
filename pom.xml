@@ -60,6 +60,11 @@
             <artifactId>h2</artifactId>
             <version>1.4.197</version>
         </dependency>
+        <dependency>
+            <groupId>com.pusher</groupId>
+            <artifactId>pusher-java-client</artifactId>
+            <version>1.8.0</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

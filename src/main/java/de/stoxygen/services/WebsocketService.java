@@ -50,6 +50,29 @@ public class WebsocketService implements WebsocketListener {
     }
 
     /**
+     * Handle data from bitstamp exchange via pusher websocket.
+     * @param msg
+     * @param exchangesId
+     * @param channel
+     */
+    public void handleBtspData(String msg, Integer exchangesId, String channel) {
+        this.exchangesId = exchangesId;
+        Exchange exchange = exchangeRepository.findByExchangesId(exchangesId);
+        String pair = channel.replaceAll("live_trades_", "");
+        logger.debug("We receive data from crypto pair {}", pair);
+        if(isJSONValid(msg)) {
+            logger.debug("It's a JSONObject we parse it!");
+            JSONObject obj = new JSONObject(msg);
+            logger.debug("Channel: {}; Amount: {}, Price: {}", pair, obj.getFloat("amount"), obj.getFloat("price"));
+            Bond bond = bondRepository.findByCryptoPair(pair.toLowerCase());
+            TickdataCurrent tickdataCurrent = new TickdataCurrent(obj.getFloat("price"), obj.getFloat("amount"));
+            tickdataCurrent.addBond(bond);
+            tickdataCurrent.addExchange(exchange);
+            tickdataCurrentRepository.save(tickdataCurrent);
+        }
+    }
+
+    /**
      * Handle data from bitfinex exchange.
      * @param s
      */

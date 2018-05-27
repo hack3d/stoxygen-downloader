@@ -4,6 +4,14 @@
 #
 version: 2
 jobs:
+  publish_release:
+    dependencies:
+        pre:
+          - go get -u github.com/tcnksm/ghr
+    steps:
+      # Push release
+      - run: cd ~/repo/target/artifacts && ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
+
   build:
     docker:
       # specify the version you desire here
@@ -44,4 +52,25 @@ jobs:
                 path: target/surefire-reports
 
       - store_artifacts:
-                path: target/
+                path: target/artifacts
+
+
+workflows:
+  version: 2
+  release:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+      - publish_release:
+        requires:
+          - build
+  snapshot:
+    jobs:
+      - build:
+          filters:
+            tags:
+              ignore: /^v.*/

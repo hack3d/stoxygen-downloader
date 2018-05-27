@@ -26,7 +26,7 @@ public class TickdataCurrent extends Auditable<String> {
     private Float low;
 
     @Column(nullable = false)
-    private Long volume;
+    private Float volume;
 
     @Column(nullable = false)
     private Boolean aggregated;
@@ -81,11 +81,11 @@ public class TickdataCurrent extends Auditable<String> {
         this.low = low;
     }
 
-    public Long getVolume() {
+    public Float getVolume() {
         return volume;
     }
 
-    public void setVolume(Long volume) {
+    public void setVolume(Float volume) {
         this.volume = volume;
     }
 
@@ -105,11 +105,23 @@ public class TickdataCurrent extends Auditable<String> {
         this.exchanges = exchange;
     }
 
+    // For bitfinex exchange
     public TickdataCurrent(Float bid, Float ask, Float high, Float low, Float last, Long volume) {
         this.bid = bid;
         this.ask = ask;
         this.high = high;
         this.low = low;
+        this.last = last;
+        this.volume = volume.floatValue();
+        this.aggregated = false;
+    }
+
+    // For bitstamp exchange
+    public TickdataCurrent(Float last, Float volume) {
+        this.bid = Float.valueOf(0);
+        this.ask = Float.valueOf(0);
+        this.high = Float.valueOf(0);
+        this.low = Float.valueOf(0);
         this.last = last;
         this.volume = volume;
         this.aggregated = false;

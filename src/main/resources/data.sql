@@ -89,4 +89,5 @@ INSERT INTO `exchange` (`exchanges_id`, `name`, `symbol`, `country_code`, `inter
 (2,'iFinex Inc.','btfx','GBR',3,'2017-12-05 21:38:26','admin','2017-12-21 17:23:48','admin');
 
 INSERT INTO `exchange_bonds` (`exchanges_exchanges_id`, `bonds_bonds_id`) VALUES
-(2, 1);
+(2, 1),
+(1, 1);
