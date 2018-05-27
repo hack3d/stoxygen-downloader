@@ -5,6 +5,7 @@
 version: 2
 jobs:
   publish_release:
+    machine: true
     dependencies:
         pre:
           - go get -u github.com/tcnksm/ghr
