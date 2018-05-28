@@ -19,6 +19,10 @@ jobs:
           at: /tmp/workspace
 
       - run:
+          name: List files on directory /tmp/workspace
+          command: ls -l /tmp
+
+      - run:
           name: Copy artifact
           command: |
             mkdir -p ~/repo/build
