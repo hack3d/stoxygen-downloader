@@ -37,6 +37,7 @@ jobs:
       - run:
           name: Push to DockerHub
           command: |
+            export GIT_COMMIT=$(git rev-parse --short HEAD)
             docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD
             docker push stockanalyses/downloader:$GIT_COMMIT
 
