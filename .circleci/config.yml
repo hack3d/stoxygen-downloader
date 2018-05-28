@@ -19,14 +19,14 @@ jobs:
           at: /tmp/workspace
 
       - run:
-          name: List files on directory /tmp/workspace
-          command: ls -l /tmp/workspace
+          name: List files on directory /tmp/workspace/build
+          command: ls -l /tmp/workspace/build
 
       - run:
           name: Copy artifact
           command: |
             mkdir -p ~/repo/build
-            cp /tmp/workspace/*.jar ~/repo/build
+            cp /tmp/workspace/build/*.jar ~/repo/build
 
       - run:
           name: Build Docker image
