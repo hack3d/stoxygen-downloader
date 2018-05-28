@@ -2,14 +2,28 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
+
+defaults: &defaults
+  working_directory: /tmp
+
 version: 2
 jobs:
   docker_pre-release:
+    <<: *defaults
     machine: true
     working_directory: ~/repo
     steps:
       - checkout
-      
+
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - run:
+          name: Copy artifact
+          command: |
+            mkdir -p ~/repo/build
+            cp /tmp/workspace/*.jar ~/repo/build
+
       - run:
           name: Build Docker image
           command: |
@@ -75,6 +89,7 @@ jobs:
                 path: build
 
   build_pre-release:
+    <<: *defaults
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
@@ -115,6 +130,11 @@ jobs:
 
       - store_artifacts:
                 path: build
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - build
 
 
 workflows:
