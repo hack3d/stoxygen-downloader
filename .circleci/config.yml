@@ -132,9 +132,9 @@ jobs:
                 path: build
 
       - persist_to_workspace:
-          root: ~/repo/build
+          root: ~/repo
           paths:
-            - *.jar
+            - build/*
 
 
 workflows:
