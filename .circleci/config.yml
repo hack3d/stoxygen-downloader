@@ -4,6 +4,25 @@
 #
 version: 2
 jobs:
+  docker_pre-release:
+    machine: true
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+        name: Get latest commit
+        command: export GIT_COMMIT=$(git rev-parse --short HEAD)
+
+      - run:
+        name: Build Docker image
+        command: docker build -t stockanalyses/downloader:$GIT_COMMIT .
+
+      - run:
+        name: Push to DockerHub
+        command: |
+          docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD
+          docker push stockanalyses/downloader:$GIT_COMMIT
+
   publish_release:
     machine: true
     dependencies:
@@ -118,3 +137,6 @@ workflows:
           filters:
             tags:
               ignore: /^v.*/
+      - docker_pre-release:
+          requires:
+            - build_pre-release
