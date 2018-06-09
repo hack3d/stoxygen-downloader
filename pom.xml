@@ -8,6 +8,23 @@
     <artifactId>stoxygen-downloader</artifactId>
     <version>${projectVersion}</version>
     <packaging>jar</packaging>
+
+    <name>Stoxygen-Downloader</name>
+    <description>Download bitcoins, stock data and import it in a database</description>
+    <url>https://github.com/hack3d/stoxygen-downloader</url>
+
+    <licenses>
+        <license>
+            <name>GPL-3.0</name>
+            <url></url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/hack3d/stoxygen-downloader</url>
+    </scm>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>

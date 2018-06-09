@@ -58,7 +58,7 @@ jobs:
             cp /tmp/workspace/build/*.jar ~/repo/build
 
       # Push release
-      - run: cd ~/repo/target/artifacts && ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build
+      - run: cd ~/repo/build && ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
 
   build_release:
     <<: *defaults
