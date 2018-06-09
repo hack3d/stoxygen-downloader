@@ -49,6 +49,7 @@ jobs:
           - go get -u github.com/tcnksm/ghr
     working_directory: ~/repo
     steps:
+      - checkout
       - attach_workspace:
           at: /tmp/workspace
       - run:
