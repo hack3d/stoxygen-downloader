@@ -28,6 +28,14 @@ public abstract class Auditable<U> {
     @LastModifiedDate
     private Date modifyTimestamp;
 
+    public Date getInsertTimestamp() {
+        return insertTimestamp;
+    }
+
+    public Date getModifyTimestamp() {
+        return modifyTimestamp;
+    }
+
     @PrePersist
     public void prePersist() {
         Date now = new Date();

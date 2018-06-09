@@ -3,15 +3,18 @@ package de.stoxygen.model;
 import javax.persistence.*;
 
 @Entity
-public class TickdataCurrent extends Auditable<String> {
+public class Tickdata1Minute extends Auditable<String> {
 
     @Id
     @Column
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long tickdataCurrentsId;
+    private Long tickdata1MinuteId;
 
     @Column(nullable = false)
-    private Float last;
+    private Float open;
+
+    @Column(nullable = false)
+    private Float close;
 
     @Column(nullable = false)
     private Float bid;
@@ -32,21 +35,29 @@ public class TickdataCurrent extends Auditable<String> {
     private Boolean aggregated;
 
     @ManyToOne
-    private Bond bond;
+    private Bond bonds;
 
     @ManyToOne
-    private Exchange exchange;
+    private Exchange exchanges;
 
-    public Long getTickdataCurrentsId() {
-        return tickdataCurrentsId;
+    public Long getTickdata1MinuteId() {
+        return tickdata1MinuteId;
     }
 
-    public Float getLast() {
-        return last;
+    public Float getOpen() {
+        return open;
     }
 
-    public void setLast(Float last) {
-        this.last = last;
+    public void setOpen(Float open) {
+        this.open = open;
+    }
+
+    public Float getClose() {
+        return close;
+    }
+
+    public void setClose(Float close) {
+        this.close = close;
     }
 
     public Float getBid() {
@@ -98,44 +109,30 @@ public class TickdataCurrent extends Auditable<String> {
     }
 
     public void addBond(Bond bond) {
-        this.bond = bond;
+        this.bonds = bond;
     }
 
     public void addExchange(Exchange exchange) {
-        this.exchange = exchange;
-    }
-
-    public TickdataCurrent() {
-
+        this.exchanges = exchange;
     }
 
     // For bitfinex exchange
-    public TickdataCurrent(Float bid, Float ask, Float high, Float low, Float last, Long volume) {
+    public Tickdata1Minute(Float bid, Float ask, Float high, Float low, Float open, Float close, Float volume) {
         this.bid = bid;
         this.ask = ask;
         this.high = high;
         this.low = low;
-        this.last = last;
-        this.volume = volume.floatValue();
-        this.aggregated = false;
-    }
-
-    // For bitstamp exchange
-    public TickdataCurrent(Float last, Float volume) {
-        this.bid = Float.valueOf(0);
-        this.ask = Float.valueOf(0);
-        this.high = Float.valueOf(0);
-        this.low = Float.valueOf(0);
-        this.last = last;
+        this.open = open;
+        this.close = close;
         this.volume = volume;
         this.aggregated = false;
     }
 
     @Override
     public String toString() {
-        String info = String.format("TickdataCurrent[Id: %s, Last: %s, Bid: %s, Ask: %s, High: %s, Low: %s, " +
-                "Volume: %s, Aggregated: %s, Bond: %s, Exchange: %s", tickdataCurrentsId, last, bid, ask, high, low,
-                volume, aggregated, bond, exchange);
+        String info = String.format("TickdataCurrent[Id: {}, Open: {}, Close: {} Bid: {}, Ask: {}, High: {}, Low: {}, " +
+                "Volume: {}, Aggregated: {}, Bond: {}, Exchange: {}", tickdata1MinuteId, open, close, bid, ask, high, low,
+                volume, aggregated, bonds, exchanges);
         return info;
     }
 }

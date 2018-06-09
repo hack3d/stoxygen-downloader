@@ -1,7 +1,6 @@
 package de.stoxygen;
 
 import com.pusher.client.Pusher;
-import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.ChannelEventListener;
 import com.pusher.client.connection.ConnectionEventListener;
@@ -19,9 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @Component

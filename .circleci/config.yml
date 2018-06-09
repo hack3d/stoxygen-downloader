@@ -42,16 +42,26 @@ jobs:
             docker push stockanalyses/downloader:$GIT_COMMIT
 
   publish_release:
+    <<: *defaults
     machine: true
     dependencies:
         pre:
           - go get -u github.com/tcnksm/ghr
     working_directory: ~/repo
     steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Copy artifact
+          command: |
+            mkdir -p ~/repo/build
+            cp /tmp/workspace/build/*.jar ~/repo/build
+
       # Push release
       - run: cd ~/repo/target/artifacts && ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` build
 
   build_release:
+    <<: *defaults
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
@@ -92,6 +102,11 @@ jobs:
 
       - store_artifacts:
                 path: build
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - build/*
 
   build_pre-release:
     <<: *defaults
