@@ -171,6 +171,11 @@ workflows:
       - publish_release:
           requires:
             - build_release
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
   snapshot:
     jobs:
       - build_pre-release:
