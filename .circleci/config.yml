@@ -169,7 +169,7 @@ workflows:
               only: /^v.*/
       - publish_release:
           requires:
-            - build
+            - build_release
   snapshot:
     jobs:
       - build_pre-release:
