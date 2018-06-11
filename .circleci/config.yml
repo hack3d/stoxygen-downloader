@@ -53,6 +53,9 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
+          name: Create symlink
+          command: ln -s $HOME/go/bin/ghr /usr/local/bin/ghr
+      - run:
           name: Copy artifact
           command: |
             mkdir -p ~/repo/build
