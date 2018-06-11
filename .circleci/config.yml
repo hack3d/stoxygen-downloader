@@ -44,29 +44,27 @@ jobs:
   publish_release:
     <<: *defaults
     machine: true
-    environment:
-      GOPATH: $HOME/go
-    dependencies:
-        pre:
-          - go get -u github.com/tcnksm/ghr
     working_directory: ~/repo
     steps:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Show Variables
-          command: |
-            echo $GOPATH
-            ls -l $GOPATH
-      - run:
           name: Copy artifact
           command: |
             mkdir -p ~/repo/build
             cp /tmp/workspace/build/*.jar ~/repo/build
-
-      # Push release
-      - run: cd ~/repo/build && $GOPATH/bin/ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
+      - run:
+          name: Build Docker image
+          command: |
+            export GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+            docker build -t stockanalyses/downloader:$GIT_TAG .
+      - run:
+          name: Push to DockerHub
+          command: |
+            export GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+            docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD
+            docker push stockanalyses/downloader:$GIT_TAG
 
   build_release:
     <<: *defaults
