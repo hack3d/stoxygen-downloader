@@ -53,6 +53,11 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
+          name: Show Variables
+          command: |
+            echo $GOPATH
+            ls -l $HOME
+      - run:
           name: Copy artifact
           command: |
             mkdir -p ~/repo/build
