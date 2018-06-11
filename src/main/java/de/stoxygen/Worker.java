@@ -53,6 +53,7 @@ public class Worker {
         logger.info("Start - checkBitfinexSymbols");
         logger.debug("Exchange {}", stoxygenConfig.getExchange());
         if(stoxygenConfig.getExchange().equals("btfx")) {
+            
             /*
             List<String> symbols = restfulClient.getBitfinexSymbols(stoxygenConfig.getExchange_httpurl());
             for(String symbol : symbols) {
