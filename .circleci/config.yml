@@ -53,16 +53,13 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Create symlink
-          command: ln -s $HOME/go/bin/ghr /usr/local/bin/ghr
-      - run:
           name: Copy artifact
           command: |
             mkdir -p ~/repo/build
             cp /tmp/workspace/build/*.jar ~/repo/build
 
       # Push release
-      - run: cd ~/repo/build && ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
+      - run: cd ~/repo/build && $HOME/go/bin/ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
 
   build_release:
     <<: *defaults
