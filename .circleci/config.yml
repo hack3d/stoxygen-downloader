@@ -56,7 +56,6 @@ jobs:
           name: Show Variables
           command: |
             echo $GOPATH
-            ls -l $GOPATH
       - run:
           name: Copy artifact
           command: |
@@ -64,7 +63,7 @@ jobs:
             cp /tmp/workspace/build/*.jar ~/repo/build
 
       # Push release
-      - run: cd ~/repo/build && $GOPATH/go/bin/ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
+      - run: cd ~/repo/build && $GOPATH/bin/ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
 
   build_release:
     <<: *defaults
@@ -192,3 +191,8 @@ workflows:
       - docker_pre-release:
           requires:
             - build_pre-release
+          filters:
+            tags:
+              ignore: /v[0-9]+\.[0-9]+\.[0-9]+/
+            branches:
+              only: master
