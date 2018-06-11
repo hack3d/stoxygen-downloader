@@ -46,7 +46,6 @@ jobs:
     machine: true
     environment:
       GOPATH: $HOME/go
-      PATH: $GOPATH/bin:$PATH
     dependencies:
         pre:
           - go get -u github.com/tcnksm/ghr
@@ -66,7 +65,7 @@ jobs:
             cp /tmp/workspace/build/*.jar ~/repo/build
 
       # Push release
-      - run: cd ~/repo/build && ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
+      - run: cd ~/repo/build && $GOPATH/bin/ghr -t $GITHUB_TOKEN -u $CIRCLE_PROJECT_USERNAME -r $CIRCLE_PROJECT_REPONAME --replace `git describe --tags` .
 
   build_release:
     <<: *defaults
