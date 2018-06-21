@@ -158,7 +158,7 @@ jobs:
       - run:
           name: Build application
           environment:
-            - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/stoxygen_downloader?useSSL=false
+            - SPRING_DATASOURCE_URL="jdbc:mysql://localhost:3306/stoxygen_downloader?useSSL=false"
             - SPRING_DATASOURCE_USERNAME=root
             - SPRING_DATASOURCE_PASSWORD=123456
           command: mvn clean package -Pdev -Dspring.profiles.active=dev
