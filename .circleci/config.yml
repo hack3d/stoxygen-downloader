@@ -121,10 +121,10 @@ jobs:
       - image: circleci/openjdk:8-jdk
       - image: cirlceci/mysql:5.7.21
         environment:
-          MYSQL_DATABASE: stoxygen_downloader
-          MYSQL_ROOT_HOST: %
-          MYSQL_USER: root
-          MYSQL_PASSWORD: 123456
+          MYSQL_DATABASE: "stoxygen_downloader"
+          MYSQL_ROOT_HOST: "%"
+          MYSQL_USER: "root"
+          MYSQL_PASSWORD: "123456"
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
