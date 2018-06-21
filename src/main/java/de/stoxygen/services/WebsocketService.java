@@ -58,7 +58,12 @@ public class WebsocketService implements WebsocketListener {
     public void handleBtspData(String msg, Integer exchangesId, String channel) {
         this.exchangesId = exchangesId;
         Exchange exchange = exchangeRepository.findByExchangesId(exchangesId);
-        String pair = channel.replaceAll("live_trades_", "");
+        String pair;
+        if(channel.equals("live_trades")) {
+            pair = "btcusd";
+        } else {
+            pair = channel.replaceAll("live_trades_", "");
+        }
         logger.debug("We receive data from crypto pair {}", pair);
         if(isJSONValid(msg)) {
             logger.debug("It's a JSONObject we parse it!");

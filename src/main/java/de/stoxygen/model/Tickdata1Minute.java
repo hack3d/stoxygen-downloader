@@ -116,6 +116,10 @@ public class Tickdata1Minute extends Auditable<String> {
         this.exchanges = exchange;
     }
 
+    public Tickdata1Minute() {
+
+    }
+
     // For bitfinex exchange
     public Tickdata1Minute(Float bid, Float ask, Float high, Float low, Float open, Float close, Float volume) {
         this.bid = bid;

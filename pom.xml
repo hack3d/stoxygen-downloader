@@ -40,6 +40,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
@@ -53,6 +57,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-maven-plugin</artifactId>
+            <version>5.1.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket -->
         <dependency>
@@ -110,19 +120,19 @@
         <profile>
             <id>test</id>
             <properties>
-                <projectVersion>0.0.1-TEST</projectVersion>
+                <projectVersion>0.0.2-TEST</projectVersion>
             </properties>
         </profile>
         <profile>
             <id>dev</id>
             <properties>
-                <projectVersion>0.0.1-SNAPSHOT</projectVersion>
+                <projectVersion>0.0.2-SNAPSHOT</projectVersion>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <projectVersion>0.0.1</projectVersion>
+                <projectVersion>0.0.2</projectVersion>
             </properties>
         </profile>
     </profiles>

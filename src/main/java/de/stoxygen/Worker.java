@@ -9,6 +9,7 @@ import de.stoxygen.model.Exchange;
 import de.stoxygen.repository.BondRepository;
 import de.stoxygen.repository.ExchangeRepository;
 import de.stoxygen.services.MailService;
+import de.stoxygen.services.PusherService;
 import de.stoxygen.services.WebsocketService;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -46,6 +47,9 @@ public class Worker {
     @Autowired
     private WebsocketService websocketService;
 
+    @Autowired
+    private PusherService pusherService;
+
     private ArrayList<String> cryptoPairs;
 
     @Scheduled(cron = "0 0 */1 * * ?")
@@ -53,7 +57,7 @@ public class Worker {
         logger.info("Start - checkBitfinexSymbols");
         logger.debug("Exchange {}", stoxygenConfig.getExchange());
         if(stoxygenConfig.getExchange().equals("btfx")) {
-            
+
             /*
             List<String> symbols = restfulClient.getBitfinexSymbols(stoxygenConfig.getExchange_httpurl());
             for(String symbol : symbols) {
@@ -82,7 +86,7 @@ public class Worker {
         logger.info("End - checkUnusedCryptoPairs");
     }
 
-    @Scheduled(initialDelay=5000, fixedRate=5000)
+    @Scheduled(initialDelay=5000, fixedDelay=5000)
     public void addCryptoPairs() {
         // Only handle if exchange is 'btfx'
         if(stoxygenConfig.getExchange().equals("btfx")) {
@@ -106,14 +110,40 @@ public class Worker {
                 }
             });
         }
+
+        // Only handle if exchange is 'btsp'
+        if(stoxygenConfig.getExchange().equals("btsp")) {
+            Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
+
+            logger.debug("Size of bonds: {}", exchange.getBonds().size());
+            exchange.getBonds().forEach( bond -> {
+                logger.debug("Check crypto pair: {}", bond.getCryptoPair());
+
+                if(!cryptoPairs.contains(bond.getCryptoPair())) {
+                    logger.info("Crypto pair {} not found in list. Subcribe it!", bond.getCryptoPair());
+                    cryptoPairs.add(bond.getCryptoPair());
+                    String channel_str;
+                    if (bond.getCryptoPair().equals("btcusd")) {
+                        channel_str = "live_trades";
+                    } else {
+                        channel_str = "live_trades_";
+                        channel_str = channel_str + bond.getCryptoPair().toLowerCase();
+                    }
+                    logger.info("Channel: {}", channel_str);
+                    pusherService.addSubscription(channel_str, "trade");
+                }
+            });
+        }
     }
 
     public void setupWebsocket() {
+        // Init ArrayList
+        cryptoPairs = new ArrayList<String>();
+
         // Only handle if exchange is 'btfx'
         if(stoxygenConfig.getExchange().equals("btfx")) {
             Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
             logger.debug("Exchange[Id: {}, Name: {}, Symbol: {}]", exchange.getExchangesId(), exchange.getName(), exchange.getSymbol());
-            cryptoPairs = new ArrayList<String>();
 
             try {
                 wss.connect();
@@ -151,41 +181,20 @@ public class Worker {
 
         // Only handle if exchange is 'btsp'
         if(stoxygenConfig.getExchange().equals("btsp")) {
-            //PusherOptions options = new PusherOptions().setCluster("stoxygen-downloader");
-            Pusher pusher = new Pusher("de504dc5763aeef9ff52");
-            pusher.connect(new ConnectionEventListener() {
-                @Override
-                public void onConnectionStateChange(ConnectionStateChange connectionStateChange) {
-                    logger.debug("State changed to {} from {}", connectionStateChange.getCurrentState(), connectionStateChange.getPreviousState());
-                }
-
-                @Override
-                public void onError(String s, String s1, Exception e) {
-                    logger.error("There was a problem connection! Message: {}; Exception: {}", s, e.getMessage());
-                }
-            });
-
             Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
-            final Channel[] channel = new Channel[1];
+            pusherService.setExchange(exchange);
             exchange.getBonds().forEach(bond -> {
-                String channel_str = "live_trades_";
-                channel_str = channel_str + bond.getCryptoPair().toLowerCase();
+                logger.info("Bond: {}", bond.getCryptoPair());
+                cryptoPairs.add(bond.getCryptoPair());
+                String channel_str;
+                if (bond.getCryptoPair().equals("btcusd")) {
+                    channel_str = "live_trades";
+                } else {
+                    channel_str = "live_trades_";
+                    channel_str = channel_str + bond.getCryptoPair().toLowerCase();
+                }
                 logger.info("Channel: {}", channel_str);
-                channel[0] = pusher.subscribe(channel_str);
-            });
-
-            //Channel channel = pusher.subscribe("live_trades_etheur");
-            channel[0].bind("trade", new ChannelEventListener() {
-                @Override
-                public void onSubscriptionSucceeded(String s) {
-                    logger.info("Subscribed to channel: {}", s);
-                }
-
-                @Override
-                public void onEvent(String s, String s1, String s2) {
-                    logger.info("Channel: {}; Data received {}", s, s2);
-                    websocketService.handleBtspData(s2, exchange.getExchangesId(), s);
-                }
+                pusherService.addSubscription(channel_str, "trade");
             });
         }
 

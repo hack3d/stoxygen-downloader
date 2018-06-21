@@ -1,5 +1,6 @@
 package de.stoxygen;
 
+import com.pusher.client.Pusher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,10 +15,10 @@ public class StoxygenConfig {
     private static final Logger logger = LoggerFactory.getLogger(StoxygenConfig.class);
 
 
-    @Value("${downloader.exchange.wss-url}")
+    @Value("${downloader.exchange.wss-url:}")
     private String exchange_wssurl;
 
-    @Value("${downloader.exchange.http-url}")
+    @Value("${downloader.exchange.http-url:}")
     private String exchange_httpurl;
 
     @Value("${downloader.exchange}")
@@ -40,6 +41,16 @@ public class StoxygenConfig {
         try {
             return new WebsocketClient(new URI(getExchange_wssurl()), getExchange());
         } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Bean(name = "pusher")
+    public Pusher pusher() {
+        try {
+            return new Pusher("de504dc5763aeef9ff52");
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
