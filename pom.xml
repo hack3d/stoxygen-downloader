@@ -120,19 +120,19 @@
         <profile>
             <id>test</id>
             <properties>
-                <projectVersion>0.0.2-TEST</projectVersion>
+                <projectVersion>0.0.3-TEST</projectVersion>
             </properties>
         </profile>
         <profile>
             <id>dev</id>
             <properties>
-                <projectVersion>0.0.2-SNAPSHOT</projectVersion>
+                <projectVersion>0.0.3-SNAPSHOT</projectVersion>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <projectVersion>0.0.2</projectVersion>
+                <projectVersion>0.0.3</projectVersion>
             </properties>
         </profile>
     </profiles>
