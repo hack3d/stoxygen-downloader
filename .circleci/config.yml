@@ -119,7 +119,7 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
-      - image: cirlceci/mysql:5.7.21
+      - image: circleci/mysql:5.7.21
         environment:
           MYSQL_DATABASE: "stoxygen_downloader"
           MYSQL_ROOT_HOST: "%"
