@@ -119,6 +119,12 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
+      - image: cirlceci/mysql:5.7.21
+        environment:
+          - MYSQL_DATABASE=stoxygen_downloader
+          - MYSQL_ROOT_HOST=%
+          - MYSQL_USER=root
+          - MYSQL_PASSWORD=123456
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -150,6 +156,10 @@ jobs:
 
       # run tests!
       - run: mvn clean package -Pdev -Dspring.profiles.active=dev
+        environment:
+          - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/stoxygen_downloader?useSSL=false
+          - SPRING_DATASOURCE_USERNAME=root
+          - SPRING_DATASOURCE_PASSWORD=123456
 
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
                 path: target/surefire-reports
