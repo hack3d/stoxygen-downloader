@@ -123,7 +123,7 @@ jobs:
         environment:
           MYSQL_DATABASE: "stoxygen_downloader"
           MYSQL_ROOT_HOST: "%"
-          MYSQL_USER: "root"
+          MYSQL_USER: "sto2-downloader"
           MYSQL_PASSWORD: "123456"
 
       # Specify service dependencies here if necessary
@@ -159,8 +159,8 @@ jobs:
           name: Build application
           environment:
             SPRING_DATASOURCE_URL: "jdbc:mysql://localhost:3306/stoxygen_downloader?useSSL=false"
-            SPRING_DATASOURCE_USERNAME: root
-            SPRING_DATASOURCE_PASSWORD: 123456
+            SPRING_DATASOURCE_USERNAME: "sto2-downloader"
+            SPRING_DATASOURCE_PASSWORD: "123456"
           command: mvn clean package -Pdev -Dspring.profiles.active=dev
 
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
