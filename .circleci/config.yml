@@ -164,6 +164,7 @@ jobs:
             FLYWAY_LOCATIONS: "db/migration/mysql"
             SPRING_JPA_PROPTERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.MySQL5InnoDBDialect"
             SPRING_JPA_HIBERNATE_DDL-AUTO: "validate"
+            DOWNLOADER_EXCHANGE: "btsp"
           command: mvn clean package -Pdev -Dspring.profiles.active=dev
 
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
