@@ -28,3 +28,4 @@ logs/
 src/main/resources/application-prod.properties
 src/main/resources/application-dev.properties
 build/
+create.sql
