@@ -1,10 +1,7 @@
 package de.stoxygen;
 
-import com.pusher.client.Pusher;
-import com.pusher.client.channel.Channel;
-import com.pusher.client.channel.ChannelEventListener;
-import com.pusher.client.connection.ConnectionEventListener;
-import com.pusher.client.connection.ConnectionStateChange;
+import de.stoxygen.model.BitstampSymbol;
+import de.stoxygen.model.Bond;
 import de.stoxygen.model.Exchange;
 import de.stoxygen.repository.BondRepository;
 import de.stoxygen.repository.ExchangeRepository;
@@ -18,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -51,33 +50,67 @@ public class Worker {
     private PusherService pusherService;
 
     private ArrayList<String> cryptoPairs;
+    private ArrayList<String> checkedCryptoPairsBitstamp;
 
-    @Scheduled(cron = "0 0 */1 * * ?")
-    public void checkBitfinexSymbols() {
+    @PostConstruct
+    public void initCheckedCryptoPairs() {
+        checkedCryptoPairsBitstamp = new ArrayList<String>();
+        bondRepository.findAll().forEach(bond -> {
+            logger.debug("Add crypto pair '{}' to list checkedCryptoPairsBitstamp", bond.getCryptoPair());
+            checkedCryptoPairsBitstamp.add(bond.getCryptoPair());
+        });
+    }
+
+    @Scheduled(initialDelay = 50000, fixedDelay = 60000)
+    private void checkBitfinexSymbols() {
         logger.info("Start - checkBitfinexSymbols");
-        logger.debug("Exchange {}", stoxygenConfig.getExchange());
         if(stoxygenConfig.getExchange().equals("btfx")) {
-
-            /*
+            logger.debug("Exchange {}", stoxygenConfig.getExchange());
             List<String> symbols = restfulClient.getBitfinexSymbols(stoxygenConfig.getExchange_httpurl());
             for(String symbol : symbols) {
                 symbol = symbol.replaceAll("\"", "");
                 logger.debug(symbol);
-                List<Bond> bond = bondRepository.findByCryptoPair(symbol);
-                if(bond.isEmpty()) {
+                try {
+                    Bond bond = bondRepository.findByCryptoPair(symbol);
+                    logger.info("Found bond name: ", bond.getName());
+                } catch (NullPointerException e) {
                     String subject = symbol + " not found!";
                     String message = "The symbol " + symbol + " could not found in the database. We found it on the exchange BITFINEX.";
                     mailService.sendMail(subject, message);
                     logger.debug("Crypto pair could not found in database. Send a mail.");
                 }
             }
-            */
+
         }
 
         logger.info("End - checkBitfinexSymbols");
     }
 
-    @Scheduled(cron = "0 0 */1 * * ?")
+    @Scheduled(initialDelay = 50000, fixedDelay = 5000)
+    private void checkBitstampSymbols() {
+        logger.info("Start - checkBitstampSymbols");
+        if(stoxygenConfig.getExchange().equals("btsp")) {
+            logger.debug("Exchange {}", stoxygenConfig.getExchange());
+            List<BitstampSymbol> symbols = restfulClient.getBitstampSymbols(stoxygenConfig.getExchange_httpurl());
+            for (BitstampSymbol symbol : symbols) {
+                logger.debug("Search for crypto pair {} on exchange BITSTAMP", symbol.getUrl_symbol());
+                if(!checkedCryptoPairsBitstamp.contains(symbol.getUrl_symbol())) {
+                    logger.warn("Crypto pair '{}' not found in bond table", symbol.getUrl_symbol());
+                    checkedCryptoPairsBitstamp.add(symbol.getUrl_symbol());
+                    String subject = symbol.getName() + " not found!";
+                    String message = "The symbol " + symbol.getName() + " could not found in the database. We found it on the exchange BITSTAMP.";
+                    mailService.sendMail(subject, message);
+                    logger.info("Crypto pair could not found in database. Send a mail.");
+
+                }
+            }
+        }
+        logger.info("End - checkBistampSymbols");
+    }
+
+
+    //@Scheduled(cron = "0 0 */1 * * ?")
+    /*
     public void checkUnusedCryptoPairs() {
         logger.info("Start - checkUnusedCryptoPairs");
         if(stoxygenConfig.getExchange().equals("btfx")) {
@@ -85,6 +118,7 @@ public class Worker {
         }
         logger.info("End - checkUnusedCryptoPairs");
     }
+    */
 
     @Scheduled(initialDelay=5000, fixedDelay=5000)
     public void addCryptoPairs() {

@@ -1,5 +1,6 @@
 package de.stoxygen;
 
+import de.stoxygen.model.BitstampSymbol;
 import de.stoxygen.model.Bond;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,22 @@ public class RestfulClient {
             logger.info("Response for GET request: NULL");
         }
 
+
+        return list;
+    }
+
+    public List<BitstampSymbol> getBitstampSymbols(String url) {
+        List<BitstampSymbol> list = new ArrayList<>();
+        logger.info("Begin /GET request to {}", url);
+        url = url + "/v2/trading-pairs-info/";
+
+        BitstampSymbol[] symbols = restTemplate.getForObject(url, BitstampSymbol[].class);
+
+        for(int i = 0; i >= symbols.length; i++) {
+            logger.info("Add symbol '{}' to list", symbols[i].getName());
+        }
+
+        list = Arrays.asList(symbols);
 
         return list;
     }
