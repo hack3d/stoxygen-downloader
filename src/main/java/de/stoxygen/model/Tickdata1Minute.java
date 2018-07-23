@@ -1,6 +1,7 @@
 package de.stoxygen.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Tickdata1Minute extends Auditable<String> {
