@@ -32,6 +32,7 @@ public class WebsocketService implements WebsocketListener {
     @Autowired
     private TickdataCurrentRepository tickdataCurrentRepository;
 
+
     @Override
     public void handleData(String msg) {
         logger.info("handle Data!");
