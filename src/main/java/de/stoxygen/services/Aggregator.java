@@ -38,6 +38,9 @@ public class Aggregator {
     @Autowired
     private Tickdata1minuteRepository tickdata1minuteRepository;
 
+    @Autowired
+    private IndicatorService indicatorService;
+
     /**
      * Generate 1 Minute aggregated data. This job will run with a delay of 5 seconds.
      */
@@ -95,9 +98,10 @@ public class Aggregator {
                     close = tickdataCurrentList1.get(0).getLast();
 
                     tickdataCurrentList1.forEach(tick -> {
-                        volume.updateAndGet(v -> v + tick.getVolume());
+                        //volume.updateAndGet(v -> v + tick.getVolume());
+                        volume.getAndUpdate(v -> v + tick.getVolume());
+                        logger.debug("Volume: '{}'; Added: '{}'", volume, tick.getVolume());
                     });
-                    logger.debug("Volume: {}", volume);
 
                     logger.info("Bond: {}, Open: {}, Close: {}, High: {}, Low: {}, Volume: {}", bond.getCryptoPair(), open, close, high, low, volume);
 
@@ -113,6 +117,9 @@ public class Aggregator {
                             tick.setAggregated(true);
                             tickdataCurrentRepository.save(tick);
                         });
+
+                        // Create message
+                        indicatorService.createCalculate(exchange.getSymbol(), bond.getIsin(), "1min", tickdataCurrentList1.get(0).getInsertTimestamp());
                     } catch (Exception e) {
                         logger.error(e.getStackTrace().toString());
                     }
@@ -139,6 +146,11 @@ public class Aggregator {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.MINUTE, i);
+
+        // Clear second and millisecond
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+
         return calendar.getTime();
     }
 }
