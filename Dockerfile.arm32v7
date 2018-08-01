@@ -1,0 +1,4 @@
+FROM arm32v7/openjdk:8-jre-slim
+COPY build/stoxygen-downloader*.jar /app.jar
+
+CMD ["/usr/bin/java", "-jar", "/app.jar"]

@@ -8,7 +8,39 @@ defaults: &defaults
 
 version: 2
 jobs:
-  docker_pre-release:
+  docker_pre-release_arm32v7:
+    <<: *defaults
+    machine: true
+    working_directory: ~/repo
+    steps:
+    - checkout
+
+    - attach_workspace:
+        at: /tmp/workspace
+
+    - run:
+        name: List files on directory /tmp/workspace/build
+        command: ls -l /tmp/workspace/build
+
+    - run:
+        name: Copy artifact
+        command: |
+          mkdir -p ~/repo/build
+          cp /tmp/workspace/build/*.jar ~/repo/build
+
+    - run:
+        name: Build Docker image
+        command: |
+          export GIT_COMMIT=$(git rev-parse --short HEAD)
+          docker build -t stockanalyses/downloader_arm32v7:$GIT_COMMIT .
+
+    - run:
+        name: Push to DockerHub
+        command: |
+          export GIT_COMMIT=$(git rev-parse --short HEAD)
+          docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD
+          docker push stockanalyses/downloader_arm32v7:$GIT_COMMIT
+  docker_pre-release_amd64:
     <<: *defaults
     machine: true
     working_directory: ~/repo
@@ -235,7 +267,15 @@ workflows:
               ignore: /v[0-9]+\.[0-9]+\.[0-9]+/
             branches:
               only: master
-      - docker_pre-release:
+      - docker_pre-release_amd64:
+          requires:
+            - build_pre-release
+          filters:
+            tags:
+              ignore: /v[0-9]+\.[0-9]+\.[0-9]+/
+            branches:
+              only: master
+      - docker_pre-release_arm32v7:
           requires:
             - build_pre-release
           filters:
