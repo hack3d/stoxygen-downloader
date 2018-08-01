@@ -1,4 +1,16 @@
 FROM arm32v7/openjdk:8-jre-slim
+
+# enable building ARM container on x86 machinery on the web (comment out next line if built on Raspberry)
+RUN ["cross-build-start"]
+
+LABEL maintainer="hack3d.dev@googlemail.com"
+
 COPY build/stoxygen-downloader*.jar /app.jar
 
 CMD ["/usr/bin/java", "-jar", "/app.jar"]
+
+# set STOPSGINAL
+STOPSIGNAL SIGTERM
+
+# stop processing ARM emulation (comment out next line if built on X15)
+RUN [ "cross-build-end" ]
