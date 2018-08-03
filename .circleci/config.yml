@@ -40,10 +40,11 @@ jobs:
           wget https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           chmod +x manifest-tool-linux-amd64
           export GIT_COMMIT=$(git rev-parse --short HEAD)
-          sed -i "s|{image}|downloader_arm32v7|g" manifest.yaml
+          docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD
+          docker push stockanalyses/downloader:armhf-$GIT_COMMIT
+          sed -i "s|{image}|downloader|g" manifest.yaml
           sed -i "s|{tag}|$GIT_COMMIT|g" manifest.yaml
           sed -i "s|{majmin}|$GIT_COMMIT|g" manifest.yaml
-          docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD
           ./manifest-tool-linux-amd64 push from-spec manifest.yaml
   docker_pre-release_amd64:
     <<: *defaults
