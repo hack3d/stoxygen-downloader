@@ -1,4 +1,4 @@
-image: seblucas/{image}:{tag}
+image: stockanalyses/{image}:{tag}
 tags: ['{majmin}','latest']
 manifests:
 -
