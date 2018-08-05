@@ -43,8 +43,8 @@ jobs:
           docker login -u $DOCKERHUB_LOGIN -p $DOCKERHUB_PASSWORD
           docker push stockanalyses/downloader:armhf-$GIT_COMMIT
           sed -i "s|{image}|downloader|g" manifest.yaml
-          sed -i "s|{tag}|$GIT_COMMIT|g" manifest.yaml
-          sed -i "s|{majmin}|$GIT_COMMIT|g" manifest.yaml
+          sed -i "s|{tag}|armhf-$GIT_COMMIT|g" manifest.yaml
+          sed -i "s|{majmin}|armhf-$GIT_COMMIT|g" manifest.yaml
           ./manifest-tool-linux-amd64 push from-spec manifest.yaml
   docker_pre-release_amd64:
     <<: *defaults
