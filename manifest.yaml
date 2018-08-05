@@ -2,7 +2,7 @@ image: stockanalyses/{image}:{tag}
 tags: ['{majmin}','latest']
 manifests:
 -
-  image: stockanalyses/{image}:armhf-{tag}
+  image: stockanalyses/{image}:{tag}
   platform:
     architecture: arm
     variant: v7
