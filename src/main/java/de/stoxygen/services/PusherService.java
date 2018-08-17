@@ -3,6 +3,7 @@ package de.stoxygen.services;
 import com.pusher.client.Pusher;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.ChannelEventListener;
+import com.pusher.client.connection.Connection;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PusherService implements ChannelEventListener, ConnectionEventListener {
+public class PusherService implements ChannelEventListener {
     private static final Logger logger = LoggerFactory.getLogger(PusherService.class);
 
     @Autowired
@@ -26,6 +27,8 @@ public class PusherService implements ChannelEventListener, ConnectionEventListe
 
     private Channel channel;
 
+    private ConnectionEventListener connectionEventListener;
+
     public PusherService() {
     }
 
@@ -34,8 +37,20 @@ public class PusherService implements ChannelEventListener, ConnectionEventListe
         pusher.connect();
     }
 
+    public void reconnect() {
+        pusher.connect();
+    }
+
     public void setExchange(Exchange exchange) {
         this.exchange = exchange;
+    }
+
+    public ConnectionState getConnectionState() {
+        return pusher.getConnection().getState();
+    }
+
+    public Boolean checkSubscription(String channel) {
+        return pusher.getChannel(channel).isSubscribed();
     }
 
     @Override
@@ -46,18 +61,8 @@ public class PusherService implements ChannelEventListener, ConnectionEventListe
     @Override
     public void onEvent(String s, String s1, String s2) {
         logger.info("Channel: {}; Data received {}", s, s2);
+        logger.debug("Connection state {}", pusher.getConnection().getState());
         websocketService.handleBtspData(s2, exchange.getExchangesId(), s);
     }
 
-
-    @Override
-    public void onConnectionStateChange(ConnectionStateChange connectionStateChange) {
-        logger.info("Pusher-Client ConnectionState changed from {} to {}", connectionStateChange.getPreviousState(), connectionStateChange.getCurrentState());
-
-    }
-
-    @Override
-    public void onError(String s, String s1, Exception e) {
-        logger.error("Pusher-Client error: [message: {}, code: {}, exception: {}]", s, s1, e.getMessage());
-    }
 }

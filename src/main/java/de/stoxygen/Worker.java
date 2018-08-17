@@ -1,5 +1,7 @@
 package de.stoxygen;
 
+import com.pusher.client.connection.Connection;
+import com.pusher.client.connection.ConnectionState;
 import de.stoxygen.model.BitstampSymbol;
 import de.stoxygen.model.Bond;
 import de.stoxygen.model.Exchange;
@@ -119,6 +121,42 @@ public class Worker {
         logger.info("End - checkUnusedCryptoPairs");
     }
     */
+
+    /**
+     * Check if connection to pusher-service is established and all channels are subscribed.
+     */
+    @Scheduled(initialDelay = 10000, fixedDelay = 5000)
+    public void testPusherConnection() {
+        if(stoxygenConfig.getExchange().equals("btsp")) {
+            logger.info("Connection-State: {}", pusherService.getConnectionState());
+            Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
+
+            logger.debug("Size of bonds: {}", exchange.getBonds().size());
+            exchange.getBonds().forEach( bond -> {
+                logger.debug("Check crypto pair: {}", bond.getCryptoPair());
+
+                String channel_str;
+                if (bond.getCryptoPair().equals("btcusd")) {
+                    channel_str = "live_trades";
+                } else {
+                    channel_str = "live_trades_";
+                    channel_str = channel_str + bond.getCryptoPair().toLowerCase();
+                }
+                logger.info("Channel: {}", channel_str);
+                logger.info("Channel {} subscribed {}", channel_str, pusherService.checkSubscription(channel_str));
+
+                // If we didn't subscribe a channel. resubscribe it.
+                if(!pusherService.checkSubscription(channel_str)) {
+                    pusherService.addSubscription(channel_str, "trade");
+                }
+
+                // If we lost connection. Reconnect!
+                if(pusherService.getConnectionState() == ConnectionState.DISCONNECTED) {
+                    pusherService.reconnect();
+                }
+            });
+        }
+    }
 
     @Scheduled(initialDelay=5000, fixedDelay=5000)
     public void addCryptoPairs() {

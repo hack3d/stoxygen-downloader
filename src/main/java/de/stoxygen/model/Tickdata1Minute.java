@@ -1,6 +1,7 @@
 package de.stoxygen.model;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -34,6 +35,9 @@ public class Tickdata1Minute extends Auditable<String> {
 
     @Column(nullable = false)
     private Boolean aggregated;
+
+    @Column(nullable = false)
+    private Date timestamp;
 
     @ManyToOne
     private Bond bonds;
@@ -109,6 +113,14 @@ public class Tickdata1Minute extends Auditable<String> {
         this.aggregated = aggregated;
     }
 
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public void addBond(Bond bond) {
         this.bonds = bond;
     }
@@ -122,7 +134,7 @@ public class Tickdata1Minute extends Auditable<String> {
     }
 
     // For bitfinex exchange
-    public Tickdata1Minute(Float bid, Float ask, Float high, Float low, Float open, Float close, Float volume) {
+    public Tickdata1Minute(Float bid, Float ask, Float high, Float low, Float open, Float close, Float volume, Date timestamp) {
         this.bid = bid;
         this.ask = ask;
         this.high = high;
@@ -131,13 +143,14 @@ public class Tickdata1Minute extends Auditable<String> {
         this.close = close;
         this.volume = volume;
         this.aggregated = false;
+        this.timestamp = timestamp;
     }
 
     @Override
     public String toString() {
         String info = String.format("TickdataCurrent[Id: {}, Open: {}, Close: {} Bid: {}, Ask: {}, High: {}, Low: {}, " +
-                "Volume: {}, Aggregated: {}, Bond: {}, Exchange: {}", tickdata1MinuteId, open, close, bid, ask, high, low,
-                volume, aggregated, bonds, exchanges);
+                "Volume: {}, Aggregated: {}, Timestamp: {}, Bond: {}, Exchange: {}", tickdata1MinuteId, open, close, bid, ask, high, low,
+                volume, aggregated, timestamp, bonds, exchanges);
         return info;
     }
 }

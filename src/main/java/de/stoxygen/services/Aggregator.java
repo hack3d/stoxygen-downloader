@@ -107,7 +107,7 @@ public class Aggregator {
 
                     try {
                         // Save all aggregated data
-                        Tickdata1Minute tickdata1Minute = new Tickdata1Minute(bid, ask, high, low, open, close, volume.get());
+                        Tickdata1Minute tickdata1Minute = new Tickdata1Minute(bid, ask, high, low, open, close, volume.get(), addMinutes(tickdataCurrent1.getInsertTimestamp(), 1));
                         tickdata1Minute.addBond(bond);
                         tickdata1Minute.addExchange(exchange);
                         tickdata1minuteRepository.save(tickdata1Minute);

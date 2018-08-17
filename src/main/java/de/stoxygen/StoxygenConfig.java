@@ -1,6 +1,9 @@
 package de.stoxygen;
 
 import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +52,10 @@ public class StoxygenConfig {
     @Bean(name = "pusher")
     public Pusher pusher() {
         try {
-            return new Pusher("de504dc5763aeef9ff52");
+            PusherOptions opt = new PusherOptions();
+            opt.setActivityTimeout(10000L);
+            opt.setPongTimeout(5000L);
+            return new Pusher("de504dc5763aeef9ff52", opt);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
