@@ -37,6 +37,11 @@ public class PusherService implements ChannelEventListener {
         pusher.connect();
     }
 
+    public void removeSubscription(String str_channel) {
+        pusher.unsubscribe(str_channel);
+
+    }
+
     public void reconnect() {
         pusher.connect();
     }

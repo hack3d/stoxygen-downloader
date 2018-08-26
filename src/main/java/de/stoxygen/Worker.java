@@ -147,6 +147,7 @@ public class Worker {
 
                 // If we didn't subscribe a channel. resubscribe it.
                 if(!pusherService.checkSubscription(channel_str)) {
+                    pusherService.removeSubscription(channel_str);
                     pusherService.addSubscription(channel_str, "trade");
                 }
 
