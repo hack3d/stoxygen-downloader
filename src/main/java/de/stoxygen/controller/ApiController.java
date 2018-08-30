@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,8 +38,9 @@ public class ApiController {
     @RequestMapping(value = "/aggregatedData/1min/exchange/{exchange}/isin/{isin}/latestTimestamp/{timestamp}", method = RequestMethod.GET)
     @ResponseBody
     public List<Tickdata1Minute> get1minAggregatedData(@PathVariable(value = "isin") String isin, @PathVariable(value = "exchange") String exchange, @PathVariable(value = "timestamp") String timestamp) {
-        Date date = new Date();
-        date.setTime(Long.valueOf(timestamp));
+        logger.info("Data[isin: {}, exchange: {}, timestamp: {}]", isin, exchange, timestamp);
+        Date date = new Date(Long.valueOf(timestamp)*1000L);
+        logger.debug("API /api/v1/aggregatedData/1min: {}", date);
         List<Bond> bonds = bondRepository.findByIsin(isin);
         Exchange exchange1 = exchangeRepository.findBySymbol(exchange);
         List<Tickdata1Minute> tickdata1Minute = new ArrayList<Tickdata1Minute>();

@@ -1,6 +1,5 @@
 package de.stoxygen;
 
-import com.pusher.client.connection.Connection;
 import com.pusher.client.connection.ConnectionState;
 import de.stoxygen.model.BitstampSymbol;
 import de.stoxygen.model.Bond;
@@ -14,6 +13,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
+@Profile("websocket")
 @Component
 public class Worker {
     private static final Logger logger = LoggerFactory.getLogger(Worker.class);
