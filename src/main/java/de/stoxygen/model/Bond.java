@@ -1,5 +1,7 @@
 package de.stoxygen.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -32,6 +34,7 @@ public class Bond extends Auditable<String> {
     private String cryptoQuote;
 
     @ManyToMany(mappedBy = "bonds", fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<Exchange> exchanges = new HashSet<>();
 
     public Bond() {

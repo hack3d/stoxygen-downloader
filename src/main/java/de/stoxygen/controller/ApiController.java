@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,5 +47,11 @@ public class ApiController {
             tickdata1Minute = tickdata1minuteRepository.findByBondsAndExchangesAndInsertTimestampLessThanEqual(bond, exchange1, date);
         }
         return tickdata1Minute;
+    }
+
+    @RequestMapping(value = "/bonds", method = RequestMethod.GET)
+    @ResponseBody
+    public Iterable<Bond> getAllBonds() {
+        return bondRepository.findAll();
     }
 }
