@@ -4,9 +4,11 @@ import com.pusher.client.connection.ConnectionState;
 import de.stoxygen.model.BitstampSymbol;
 import de.stoxygen.model.Bond;
 import de.stoxygen.model.Exchange;
+import de.stoxygen.model.notification.NotificationCategory;
+import de.stoxygen.model.notification.NotificationSeverity;
 import de.stoxygen.repository.BondRepository;
 import de.stoxygen.repository.ExchangeRepository;
-import de.stoxygen.services.MailService;
+import de.stoxygen.services.NotificationService;
 import de.stoxygen.services.PusherService;
 import de.stoxygen.services.WebsocketService;
 import org.json.JSONObject;
@@ -41,9 +43,6 @@ public class Worker {
     private ExchangeRepository exchangeRepository;
 
     @Autowired
-    private MailService mailService;
-
-    @Autowired
     private WebsocketClient wss;
 
     @Autowired
@@ -51,6 +50,9 @@ public class Worker {
 
     @Autowired
     private PusherService pusherService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     private ArrayList<String> cryptoPairs;
     private ArrayList<String> checkedCryptoPairsBitstamp;
@@ -79,7 +81,9 @@ public class Worker {
                 } catch (NullPointerException e) {
                     String subject = symbol + " not found!";
                     String message = "The symbol " + symbol + " could not found in the database. We found it on the exchange BITFINEX.";
-                    mailService.sendMail(subject, message);
+
+                    notificationService.createNotification(NotificationSeverity.NORMAL,
+                            "Downloader - checkBitfinexSymbols", NotificationCategory.USER, message);
                     logger.debug("Crypto pair could not found in database. Send a mail.");
                 }
             }
@@ -102,7 +106,9 @@ public class Worker {
                     checkedCryptoPairsBitstamp.add(symbol.getUrl_symbol());
                     String subject = symbol.getName() + " not found!";
                     String message = "The symbol " + symbol.getName() + " could not found in the database. We found it on the exchange BITSTAMP.";
-                    mailService.sendMail(subject, message);
+
+                    notificationService.createNotification(NotificationSeverity.NORMAL,
+                            "Downloader - checkBitstampSymbols", NotificationCategory.USER, message);
                     logger.info("Crypto pair could not found in database. Send a mail.");
 
                 }

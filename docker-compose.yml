@@ -1,0 +1,8 @@
+# This is for dev
+version: '3'
+services:
+  sto2-rabbitmq:
+    image: rabbitmq:3.7.8-management
+    ports:
+      - "15675:15672"
+      - "5675:5672"
