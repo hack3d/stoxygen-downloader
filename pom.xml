@@ -128,19 +128,19 @@
         <profile>
             <id>test</id>
             <properties>
-                <projectVersion>0.0.3-TEST</projectVersion>
+                <projectVersion>0.0.4-TEST</projectVersion>
             </properties>
         </profile>
         <profile>
             <id>dev</id>
             <properties>
-                <projectVersion>0.0.3-SNAPSHOT</projectVersion>
+                <projectVersion>0.0.4-SNAPSHOT</projectVersion>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <projectVersion>0.0.3</projectVersion>
+                <projectVersion>0.0.4</projectVersion>
             </properties>
         </profile>
     </profiles>
