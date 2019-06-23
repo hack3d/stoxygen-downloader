@@ -2,7 +2,6 @@ package de.stoxygen.model;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 public class Tickdata1Minute extends Auditable<String> {
@@ -43,7 +42,7 @@ public class Tickdata1Minute extends Auditable<String> {
     private Bond bonds;
 
     @ManyToOne
-    private Exchange exchanges;
+    private Exchange exchange;
 
     public Long getTickdata1MinuteId() {
         return tickdata1MinuteId;
@@ -126,7 +125,7 @@ public class Tickdata1Minute extends Auditable<String> {
     }
 
     public void addExchange(Exchange exchange) {
-        this.exchanges = exchange;
+        this.exchange = exchange;
     }
 
     public Tickdata1Minute() {
@@ -150,7 +149,7 @@ public class Tickdata1Minute extends Auditable<String> {
     public String toString() {
         String info = String.format("TickdataCurrent[Id: {}, Open: {}, Close: {} Bid: {}, Ask: {}, High: {}, Low: {}, " +
                 "Volume: {}, Aggregated: {}, Timestamp: {}, Bond: {}, Exchange: {}", tickdata1MinuteId, open, close, bid, ask, high, low,
-                volume, aggregated, timestamp, bonds, exchanges);
+                volume, aggregated, timestamp, bonds, exchange);
         return info;
     }
 }

@@ -1,2 +1,2 @@
-INSERT INTO `bond` (`name`, `isin`, `state`, `insert_timestamp`, `insert_user`, `modify_timestamp`, `modify_user`, `crypto_pair`, `crypto_base`, `crypto_quote`) VALUES
-('Ripple/Euro','XFC000000085',0, now(),'admin', now(),'admin','xrpeur','xrp','eur');
+INSERT INTO bond (bonds_id, name, isin, state, insert_timestamp, insert_user, modify_timestamp, modify_user, crypto_pair, crypto_base, crypto_quote) VALUES
+(85, 'Ripple/Euro','XFC000000085',0, now(),'admin', now(),'admin','xrpeur','xrp','eur');

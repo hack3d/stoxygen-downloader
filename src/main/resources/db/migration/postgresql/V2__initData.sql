@@ -1,4 +1,4 @@
-INSERT INTO `bond` (`bonds_id`, `name`, `isin`, `state`, `insert_timestamp`, `insert_user`, `modify_timestamp`, `modify_user`, `crypto_pair`, `crypto_base`, `crypto_quote`) VALUES
+INSERT INTO bond (bonds_id, name, isin, state, insert_timestamp, insert_user, modify_timestamp, modify_user, crypto_pair, crypto_base, crypto_quote) VALUES
 (1,'Bitcoin/Euro','XFC000000001',0,'2017-12-09 18:55:05','admin','2018-03-30 20:00:17','admin','btceur','btc','eur'),
 (2,'Bitcoin/US-Dollar','XFC000000002',0,'2017-12-10 15:23:07','admin','2018-03-30 20:00:17','admin','btcusd','btc','usd'),
 (3,'Litecoin/US-Dollar','XFC000000003',0,'2018-02-16 17:14:56','admin','2018-03-30 20:00:17','admin','ltcusd','ltc','usd'),
@@ -84,10 +84,10 @@ INSERT INTO `bond` (`bonds_id`, `name`, `isin`, `state`, `insert_timestamp`, `in
 (83,'SpankChain/Bitcoin','XFC000000083',0,'2018-02-16 17:14:56','admin','2018-03-30 20:00:17','admin','spkbtc','spk','btc'),
 (84,'SpankChain/Ethereum','XFC000000084',0,'2018-02-16 17:14:56','admin','2018-03-30 20:00:17','admin','spketh','spk','eth');
 
-INSERT INTO `exchange` (`exchanges_id`, `name`, `symbol`, `country_code`, `interval_delay`, `insert_timestamp`, `insert_user`, `modify_timestamp`, `modify_user`) VALUES
+INSERT INTO exchange (exchanges_id, name, symbol, country_code, interval_delay, insert_timestamp, insert_user, modify_timestamp, modify_user) VALUES
 (1,'Bitstamp Ltd.','btsp','GBR',6,'2017-12-05 21:38:26','admin','2017-12-21 17:23:48','admin'),
 (2,'iFinex Inc.','btfx','GBR',3,'2017-12-05 21:38:26','admin','2017-12-21 17:23:48','admin');
 
-INSERT INTO `exchange_bonds` (`exchanges_exchanges_id`, `bonds_bonds_id`) VALUES
+INSERT INTO exchange_bonds (exchanges_exchanges_id, bonds_bonds_id) VALUES
 (2, 1),
 (1, 1);

@@ -44,7 +44,7 @@ public class ApiController {
         Exchange exchange1 = exchangeRepository.findBySymbol(exchange);
         List<Tickdata1Minute> tickdata1Minute = new ArrayList<Tickdata1Minute>();
         for(Bond bond : bonds) {
-            tickdata1Minute = tickdata1minuteRepository.findByBondsAndExchangesAndInsertTimestampLessThanEqual(bond, exchange1, date);
+            tickdata1Minute = tickdata1minuteRepository.findByBondsAndExchangeAndInsertTimestampLessThanEqual(bond, exchange1, date);
         }
         return tickdata1Minute;
     }

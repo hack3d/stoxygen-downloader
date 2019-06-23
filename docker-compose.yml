@@ -6,3 +6,18 @@ services:
     ports:
       - "15675:15672"
       - "5675:5672"
+  sto2-psql:
+    image: postgres:10.6
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: sto2-downloader
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: sto2_downloader
+  pgadmin4:
+    image: dpage/pgadmin4:4.5
+    ports:
+      - 8082:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+      PGADMIN_DEFAULT_PASSWORD: 123456

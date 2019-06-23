@@ -15,5 +15,5 @@ import java.util.List;
 public interface Tickdata1minuteRepository extends CrudRepository<Tickdata1Minute, Long> {
     List<Tickdata1Minute> findByBonds(Bond bonds);
 
-    List<Tickdata1Minute> findByBondsAndExchangesAndInsertTimestampLessThanEqual(Bond bonds, Exchange exchanges, Date startTimestamp);
+    List<Tickdata1Minute> findByBondsAndExchangeAndInsertTimestampLessThanEqual(Bond bonds, Exchange exchange, Date startTimestamp);
 }

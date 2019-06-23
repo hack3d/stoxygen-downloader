@@ -139,7 +139,7 @@ public class Worker {
             Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
 
             logger.debug("Size of bonds: {}", exchange.getBonds().size());
-            exchange.getBonds().forEach( bond -> {
+            exchange.getBonds().forEach(bond -> {
                 logger.debug("Check crypto pair: {}", bond.getCryptoPair());
 
                 String channel_str;
@@ -173,7 +173,7 @@ public class Worker {
             Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
 
             logger.debug("Size of bonds: {}", exchange.getBonds().size());
-            exchange.getBonds().forEach( bond -> {
+            exchange.getBonds().forEach(bond -> {
                 logger.debug("Check crypto pair: {}", bond.getCryptoPair());
 
                 if (!cryptoPairs.contains(bond.getCryptoPair())) {
@@ -196,7 +196,7 @@ public class Worker {
             Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
 
             logger.debug("Size of bonds: {}", exchange.getBonds().size());
-            exchange.getBonds().forEach( bond -> {
+            exchange.getBonds().forEach(bond -> {
                 logger.debug("Check crypto pair: {}", bond.getCryptoPair());
 
                 if(!cryptoPairs.contains(bond.getCryptoPair())) {

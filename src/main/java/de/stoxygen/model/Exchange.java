@@ -21,7 +21,7 @@ public class Exchange extends Auditable<String>{
     @Column(nullable = false, length = 4)
     private String countryCode;
 
-    @Column(columnDefinition = "int(2) default 0")
+    @Column(columnDefinition = "default 0")
     private Integer intervalDelay;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
