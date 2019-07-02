@@ -44,7 +44,7 @@ public class Aggregator {
     /**
      * Generate 1 Minute aggregated data. This job will run with a delay of 5 seconds.
      */
-    @Scheduled(initialDelay=5000, fixedDelay=5000)
+    //@Scheduled(initialDelay=5000, fixedDelay=5000)
     public void generate1MinuteData() {
         logger.debug("Start generate1MinuteData()!");
 

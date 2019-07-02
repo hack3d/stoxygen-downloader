@@ -3,6 +3,7 @@ package de.stoxygen.services;
 import de.stoxygen.model.Bond;
 import de.stoxygen.model.Exchange;
 import de.stoxygen.model.TickdataCurrent;
+import de.stoxygen.model.aggregate.AggregateType;
 import de.stoxygen.repository.BondRepository;
 import de.stoxygen.repository.ExchangeRepository;
 import de.stoxygen.repository.TickdataCurrentRepository;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 
 @Service
@@ -32,6 +34,8 @@ public class WebsocketService implements WebsocketListener {
     @Autowired
     private TickdataCurrentRepository tickdataCurrentRepository;
 
+    @Autowired
+    private AggregatorService aggregatorService;
 
     @Override
     public void handleData(String msg) {
@@ -75,6 +79,7 @@ public class WebsocketService implements WebsocketListener {
             tickdataCurrent.addBond(bond);
             tickdataCurrent.addExchange(exchange);
             tickdataCurrentRepository.save(tickdataCurrent);
+            aggregatorService.createAggregateMessage(exchange.getSymbol(), bond.getIsin(), AggregateType.ONE_MINUTE, new Date());
         }
     }
 
@@ -121,6 +126,8 @@ public class WebsocketService implements WebsocketListener {
                 tickdataCurrent.addBond(bond);
                 tickdataCurrent.addExchange(exchange);
                 tickdataCurrentRepository.save(tickdataCurrent);
+
+
             } catch (JSONException ex) {
                 logger.info("Received a heartbeat or something else; {}", jarr.getString(1));
 
