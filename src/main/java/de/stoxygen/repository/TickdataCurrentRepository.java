@@ -19,4 +19,6 @@ public interface TickdataCurrentRepository extends CrudRepository<TickdataCurren
 
     List<TickdataCurrent> findByExchangeAndBondAndAggregatedAndInsertTimestampBetween(Exchange exchange, Bond bond, Boolean aggregated, Date startTimestamp, Date endTimestamp);
 
+    List<TickdataCurrent> findByExchangeAndBondAndInsertTimestampBetween(Exchange exchange, Bond bond, Date startTimestamp, Date endTimestamp);
+
 }
