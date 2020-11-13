@@ -11,14 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class ExchangeController {
@@ -31,31 +32,32 @@ public class ExchangeController {
     private BondRepository bondRepository;
 
     @RequestMapping(value = "/exchanges", method = RequestMethod.GET)
-    public String getAllExchanges(Model model) {
+    public String getAllExchanges(final Model model) {
         model.addAttribute("exchanges", exchangeRepository.findAll());
         return "exchanges";
     }
 
     @RequestMapping(value = "/exchanges/{id}", method = RequestMethod.GET)
-    public String getBondsByExchange(@PathVariable(value = "id") Integer exchangesId, Model model) {
-        Exchange exchange = exchangeRepository.findOne(exchangesId);
+    public String getBondsByExchange(@PathVariable(value = "id") final Integer exchangesId, final Model model) {
+        final Optional<Exchange> exchange = exchangeRepository.findById(exchangesId);
 
-        model.addAttribute("title", exchange.getName());
-        model.addAttribute("bonds", exchange.getBonds());
+        model.addAttribute("title", exchange.get().getName());
+        model.addAttribute("bonds", exchange.get().getBonds());
 
         return "bonds";
     }
 
     @RequestMapping(value = "/exchanges/add", method = RequestMethod.GET)
-    public String addNewExchange(Exchange exchange) {
+    public String addNewExchange(final Exchange exchange) {
         return "exchanges_add";
     }
 
     @RequestMapping(value = "/exchanges/add", method = RequestMethod.POST)
-    public String addNewExchange(@Valid Exchange exchange, BindingResult bindingResult, Model model) {
-        Map<String, String> map = new HashMap<>();
+    public String addNewExchange(@Validated final Exchange exchange, final BindingResult bindingResult,
+            final Model model) {
+        final Map<String, String> map = new HashMap<>();
         map.put("spring", "mvc");
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "exchanges_add";
         }
         logger.info("Exchange[Name: {}, Symbol: {}, Interval: {}, Country Code: {}", exchange.getName(),
@@ -67,12 +69,12 @@ public class ExchangeController {
     }
 
     @RequestMapping(value = "/exchanges/delete/{id}", method = RequestMethod.GET)
-    public String deleteExchange(@PathVariable(value = "id") Integer exchangesId, Model model) {
-        Exchange exchange = exchangeRepository.findByExchangesId(exchangesId);
-        Map<String, String> map = new HashMap<>();
+    public String deleteExchange(@PathVariable(value = "id") final Integer exchangesId, final Model model) {
+        final Exchange exchange = exchangeRepository.findByExchangesId(exchangesId);
+        final Map<String, String> map = new HashMap<>();
         map.put("spring", "mvc");
 
-        if(exchange == null) {
+        if (exchange == null) {
             model.addAttribute("errorMessage", "Exchange with the ID " + exchangesId + " could not be found.");
             model.mergeAttributes(map);
             return "redirect:/exchanges";
@@ -86,31 +88,29 @@ public class ExchangeController {
     }
 
     @RequestMapping(value = "/exchanges/add-bond/{id}", method = RequestMethod.GET)
-    public String addNewBondExchange(@PathVariable(value = "id") int exchangesId, Model model) {
-        Exchange exchange = exchangeRepository.findOne(exchangesId);
+    public String addNewBondExchange(@PathVariable(value = "id") final int exchangesId, final Model model) {
+        final Exchange exchange = exchangeRepository.findById(exchangesId).orElse(null);
 
-
-        AddBondItemForm form = new AddBondItemForm(
-          bondRepository.findAll(), exchange
-        );
+        final AddBondItemForm form = new AddBondItemForm(bondRepository.findAll(), exchange);
 
         logger.debug("Exchange[Id: {}]", exchange.getExchangesId());
         model.addAttribute("title", exchange.getName());
         model.addAttribute("form", form);
-        //model.addAttribute("bonds", initializeBonds());
+        // model.addAttribute("bonds", initializeBonds());
 
         return "exchanges_add-bond";
     }
 
     @RequestMapping(value = "/exchanges/add-bond", method = RequestMethod.POST)
-    public String addNewBondExchange(@ModelAttribute @Valid AddBondItemForm form, BindingResult bindingResult, Model model) {
-        if(bindingResult.hasErrors()) {
+    public String addNewBondExchange(@ModelAttribute @Validated final AddBondItemForm form,
+            final BindingResult bindingResult, final Model model) {
+        if (bindingResult.hasErrors()) {
             return "exchanges_add-bond";
         }
 
         logger.debug("Exchange[Id: {}], Bond[Id: {}]", form.getExchangesId(), form.getBonds_id());
-        Bond theBond = bondRepository.findOne(form.getBonds_id());
-        Exchange theExchange = exchangeRepository.findOne(form.getExchangesId());
+        final Bond theBond = bondRepository.findById(form.getBonds_id()).orElse(null);
+        final Exchange theExchange = exchangeRepository.findById(form.getExchangesId()).orElse(null);
         theExchange.addBond(theBond);
         exchangeRepository.save(theExchange);
 

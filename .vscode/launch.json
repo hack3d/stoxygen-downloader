@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch stoxygen-download",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "mainClass": "de.stoxygen.Application",
+            "args": "",
+            "projectName": "stoxygen-downloader"
+        }
+    ]
+}

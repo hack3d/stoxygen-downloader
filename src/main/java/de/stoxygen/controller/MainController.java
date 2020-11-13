@@ -8,10 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.validation.Valid;
 
 @Controller
 public class MainController {
@@ -19,7 +18,6 @@ public class MainController {
 
     @Autowired
     private BondRepository bondRepository;
-
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String home() {
@@ -39,7 +37,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/bonds/add", method = RequestMethod.POST)
-    public String addNewBond(@Valid Bond bond, BindingResult bindingResult) {
+    public String addNewBond(@Validated Bond bond, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "bonds_add";
         }

@@ -1,16 +1,16 @@
 package de.stoxygen.model.form;
 
+import org.springframework.lang.NonNull;
+
 import de.stoxygen.model.Bond;
 import de.stoxygen.model.Exchange;
 
-import javax.validation.constraints.NotNull;
-
 public class AddBondItemForm {
 
-    @NotNull
+    @NonNull
     private int bonds_id;
 
-    @NotNull
+    @NonNull
     private int exchangesId;
 
     private Iterable<Bond> bonds;

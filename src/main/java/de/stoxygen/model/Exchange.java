@@ -25,7 +25,7 @@ public class Exchange extends Auditable<String>{
     private Integer intervalDelay;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private Set<Bond> bonds = new HashSet<>();
+    private final Set<Bond> bonds = new HashSet<>();
 
     public Exchange() {
     }
@@ -34,12 +34,12 @@ public class Exchange extends Auditable<String>{
         return bonds;
     }
 
-    public void addBond(Bond bond) {
-        bonds.add(bond);
-        bond.getExchanges().add(this);
+    public void addBond(final Bond theBond) {
+        bonds.add(theBond);
+        theBond.getExchanges().add(this);
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -47,7 +47,7 @@ public class Exchange extends Auditable<String>{
         return name;
     }
 
-    public void setSymbol(String symbol) {
+    public void setSymbol(final String symbol) {
         this.symbol = symbol;
     }
 
@@ -55,7 +55,7 @@ public class Exchange extends Auditable<String>{
         return symbol;
     }
 
-    public void setCountryCode(String countryCode) {
+    public void setCountryCode(final String countryCode) {
         this.countryCode = countryCode;
     }
 
@@ -63,7 +63,7 @@ public class Exchange extends Auditable<String>{
         return countryCode;
     }
 
-    public void setIntervalDelay(Integer intervalDelay) {
+    public void setIntervalDelay(final Integer intervalDelay) {
         this.intervalDelay = intervalDelay;
     }
 
@@ -77,7 +77,7 @@ public class Exchange extends Auditable<String>{
 
     @Override
     public String toString() {
-        String info = String.format("Exchange: id = %d, name = %s, symbol = %s, country_code = %s, interval = %s",
+        final String info = String.format("Exchange: id = %d, name = %s, symbol = %s, country_code = %s, interval = %s",
                 exchangesId, name, symbol, countryCode, intervalDelay);
         return info;
     }

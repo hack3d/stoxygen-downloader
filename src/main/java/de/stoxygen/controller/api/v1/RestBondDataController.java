@@ -2,7 +2,6 @@ package de.stoxygen.controller.api.v1;
 
 import de.stoxygen.model.Bond;
 import de.stoxygen.model.Exchange;
-import de.stoxygen.model.Tickdata1Minute;
 import de.stoxygen.model.TickdataCurrent;
 import de.stoxygen.repository.BondRepository;
 import de.stoxygen.repository.ExchangeRepository;

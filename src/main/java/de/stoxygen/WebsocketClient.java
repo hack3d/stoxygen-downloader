@@ -49,7 +49,7 @@ public class WebsocketClient extends WebSocketClient {
     public void onMessage(String s) {
         logger.debug("received message: {}", s);
         if(exchangesId != null) {
-            Exchange exchange = exchangeRepository.findOne(exchangesId);
+            //Exchange exchange = exchangeRepository.findById(exchangesId).orElse(null);
             websocketService.handleData(s, exchangesId);
         } else if(name != null) {
             Exchange exchange = exchangeRepository.findBySymbol(name);
