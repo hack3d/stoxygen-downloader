@@ -1,0 +1,49 @@
+name: Downloader testing
+
+on:
+    push:
+    pull_request:
+        branches: [master]
+
+jobs:
+    testing:
+        runs-on: ubuntu-latest
+        services:
+            sto2-psql:
+                image: postgres:11
+                env:
+                    POSTGRES_PASSWORD: 123456
+                    POSTGRES_USER: app_stoxygen
+                    POSTGRES_DB: sto2_downloader
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --healht-retries 5
+                ports:
+                    - 5432/tcp
+            sto2-rabbitmq:
+                image: rabbitmq:3.7.8
+                ports:
+                    - 5672/tcp
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set up JDK 11
+              uses: actions/setup-java@v1
+              with:
+                java-version: 11
+            - name: Run test
+              run: mvn test
+              env:
+                SPRING_PROFILES_ACTIVE: test
+                SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:${{ job.services.sto2-psql.ports[5432] }}/sto2_downloader
+                SPRING_DATASOURCE_USERNAME: app_stoxygen
+                SPRING_DATASOURCE_PASSWORD: 123456
+                SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+                DOWNLOADER_EXCHANGE: btsp
+                SPRING_RABBITMQ_HOST: localhost
+                SPRING_RABBITMQ_PORT: ${{ job.services.sto2-rabbitmq.ports[5672] }}
+                SPRING_RABBITMQ_USERNAME: guest
+                SPRING_RABBITMQ_PASSWORD: guest
+            - name: Build with Maven
+              run: mvn -B package --file pom.xml
