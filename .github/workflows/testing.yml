@@ -19,7 +19,7 @@ jobs:
                     --health-cmd pg_isready
                     --health-interval 10s
                     --health-timeout 5s
-                    --healht-retries 5
+                    --health-retries 5
                 ports:
                     - 5432/tcp
             sto2-rabbitmq:
