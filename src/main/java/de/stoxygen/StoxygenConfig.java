@@ -27,6 +27,12 @@ public class StoxygenConfig {
     @Value("${downloader.exchange}")
     private String exchange;
 
+    @Value("${alphavantage.url:}")
+    private String alphavantageUrl;
+
+    @Value("${alphavantage.api-key:}")
+    private String alphavantageApiKey;
+
     public String getExchange_wssurl() {
         return exchange_wssurl;
     }
@@ -37,6 +43,14 @@ public class StoxygenConfig {
 
     public String getExchange_httpurl() {
         return exchange_httpurl;
+    }
+
+    public String getAlphavantageUrl() {
+        return alphavantageUrl;
+    }
+
+    public String getAlphavantageApiKey() {
+        return alphavantageApiKey;
     }
 
     @Bean(name = "websocketClient")

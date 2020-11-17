@@ -2,8 +2,11 @@ package de.stoxygen;
 
 import de.stoxygen.model.BitstampSymbol;
 import de.stoxygen.model.Bond;
+import de.stoxygen.model.alphavantage.TimeSeriesResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +19,9 @@ import java.util.List;
 @Component
 public class RestfulClient {
     private static final Logger logger = LoggerFactory.getLogger(RestfulClient.class);
+    
+    @Autowired
+    private StoxygenConfig stoxygenConfig;
 
     RestTemplate restTemplate;
 
@@ -57,6 +63,17 @@ public class RestfulClient {
         list = Arrays.asList(symbols);
 
         return list;
+    }
+
+    public TimeSeriesResponse getAlphavantageDailyHistoricalData(String symbol) {
+        
+        String url = stoxygenConfig.getAlphavantageUrl() + "/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=" + stoxygenConfig.getAlphavantageApiKey();
+        logger.info("Begin /GET request to {}", url);
+
+        TimeSeriesResponse stockData = restTemplate.getForObject(url,TimeSeriesResponse.class);
+        logger.info("Alphavantage result: {}", stockData.toString());
+
+        return stockData;
     }
 
     Job getJob(String url) {
