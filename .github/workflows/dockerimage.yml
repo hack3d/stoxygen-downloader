@@ -59,6 +59,7 @@ jobs:
                 path: staging
                 retention-days: 1
     lint-docker:
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkou@v2
             - name: Hadolint dockerfile
@@ -67,6 +68,7 @@ jobs:
                 dockerfile: Dockerfile
     build-docker:
         needs: [build-jar, lint-docker]
+        runs-on: ubuntu-latest
         steps:
             - name: Download artifact
               uses: actions/download-artifact@v2
