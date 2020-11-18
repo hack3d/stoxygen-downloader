@@ -12,7 +12,7 @@ services:
           INSTALL_NODE: "false"
           NODE_VERSION: "lts/*"
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: dev,websocket
     networks:
       - stoxygen_downloader
   sto2-rabbitmq:

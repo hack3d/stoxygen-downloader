@@ -39,10 +39,10 @@ public class RestfulClient {
         symbols = symbols.replace("]", "");
 
         if(symbols != null) {
-            logger.info("Response for GET request: {}", symbols);
+            logger.debug("Response for GET request: {}", symbols);
             list = Arrays.asList(symbols.split(","));
         } else {
-            logger.info("Response for GET request: NULL");
+            logger.debug("Response for GET request: NULL");
         }
 
 
@@ -71,7 +71,6 @@ public class RestfulClient {
         logger.info("Begin /GET request to {}", url);
 
         TimeSeriesResponse stockData = restTemplate.getForObject(url,TimeSeriesResponse.class);
-        logger.info("Alphavantage result: {}", stockData.toString());
 
         return stockData;
     }

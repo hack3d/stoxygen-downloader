@@ -1,0 +1,10 @@
+target/
+logs/
+.vscode/
+.devcontainer/
+.idea/
+sql/
+pgadmin4/
+create.sql
+manifest.yaml
+stoxygen-downloader.iml

@@ -1,0 +1,68 @@
+name: Docker Image CI
+
+on:
+    push:
+    pull_request:
+        branches: [master]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        services:
+            sto2-psql:
+                image: postgres:11
+                env:
+                    POSTGRES_PASSWORD: 123456
+                    POSTGRES_USER: app_stoxygen
+                    POSTGRES_DB: sto2_downloader
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                    - 5432/tcp
+            sto2-rabbitmq:
+                image: rabbitmq:3.7.8
+                ports:
+                    - 5672/tcp
+        steps:
+            - uses: actions/checkout@v2
+            - name: Cache local Maven repository
+              uses: actions/cache@v2
+              with:
+                path: ~/.m2/repository
+                key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+                restore-keys: |
+                    ${{ runner.os }}-maven-
+            - name: Build with Maven
+              run: mvn clean package -Pdev -Dspring.profiles.active=dev
+              env:
+                SPRING_PROFILES_ACTIVE: test
+                SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:${{ job.services.sto2-psql.ports[5432] }}/sto2_downloader
+                SPRING_DATASOURCE_USERNAME: app_stoxygen
+                SPRING_DATASOURCE_PASSWORD: 123456
+                SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+                DOWNLOADER_EXCHANGE: btsp
+                SPRING_RABBITMQ_HOST: localhost
+                SPRING_RABBITMQ_PORT: ${{ job.services.sto2-rabbitmq.ports[5672] }}
+                SPRING_RABBITMQ_USERNAME: guest
+                SPRING_RABBITMQ_PASSWORD: guest
+            - name: Hadolint dockerfile
+              uses: brpaz/hadolint-action@master
+              with:
+                dockerfile: Dockerfile
+            - name: Set up Docker Buildx
+              id: buildx
+              uses: crazy-max/ghaction-docker-buildx@v1
+              with:
+                version: latest
+            - name: Available platforms
+              run: echo ${{ steps.buildx.outputs.platforms }}
+            - name: Run Buildx
+              run: |
+                docker buildx build \
+                --platform linux/arm/v7 \
+                --output "type=image,push=false" \
+                --tag stockanaylses/downloader:latest \
+                --file Dockerfile .

@@ -32,7 +32,6 @@ public class StockUnitDeserializer extends JsonDeserializer<List<StockUnit>> {
             });
 
             for(String key : test.keySet()) {
-                logger.info("Key: {}, Open: {}", key, test.get(key).getOpen());
                 test.get(key).setDateTime(key);
             }
             List<StockUnit> stockUnit = new ArrayList<StockUnit>(test.values());

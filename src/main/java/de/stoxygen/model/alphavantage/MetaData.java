@@ -3,7 +3,6 @@ package de.stoxygen.model.alphavantage;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.json.JSONObject;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MetaData {

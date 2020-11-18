@@ -15,7 +15,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -132,7 +134,7 @@ public class Worker {
     /**
      * Check if connection to pusher-service is established and all channels are subscribed.
      */
-    @Scheduled(initialDelay = 10000, fixedDelay = 5000)
+    //@Scheduled(initialDelay = 10000, fixedDelay = 5000)
     public void testPusherConnection() {
         if(stoxygenConfig.getExchange().equals("btsp")) {
             logger.info("Connection-State: {}", pusherService.getConnectionState());
@@ -216,26 +218,25 @@ public class Worker {
         }
     }
 
+    @EventListener(ApplicationReadyEvent.class)
     public void setupWebsocket() {
         // Init ArrayList
         cryptoPairs = new ArrayList<String>();
 
-        // Only handle if exchange is 'btfx'
-        if(stoxygenConfig.getExchange().equals("btfx")) {
-            Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
-            logger.debug("Exchange[Id: {}, Name: {}, Symbol: {}]", exchange.getExchangesId(), exchange.getName(), exchange.getSymbol());
+        try{
+            wss.connect();
+            logger.debug("Websocket state: {}", wss.getReadyState());
 
-            try {
-                wss.connect();
-                logger.debug("Websocket state: {}", wss.getReadyState());
+            // Check if websocket connection is open.
+            while (!wss.isOpen()) {
+                logger.debug("Connection to websocket-server is not open yet!");
+                TimeUnit.SECONDS.sleep(1);
 
+            }
 
-                // Check if websocket connection is open.
-                while (!wss.isOpen()) {
-                    logger.debug("Connection to websocket-server is not open yet!");
-                    TimeUnit.SECONDS.sleep(1);
-
-                }
+            if(stoxygenConfig.getExchange().equals("btfx")) {
+                Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
+                logger.debug("Exchange[Id: {}, Name: {}, Symbol: {}]", exchange.getExchangesId(), exchange.getName(), exchange.getSymbol());
 
                 logger.debug("Websocket state: {}", wss.getReadyState());
                 exchange.getBonds().forEach(bond -> {
@@ -251,15 +252,14 @@ public class Worker {
                     wss.send(message);
                     logger.debug("{}", bond.toString());
                 });
-
-
-            } catch (InterruptedException e) {
-                logger.error("Exception: {}", e);
-                e.printStackTrace();
             }
+        } catch (InterruptedException e) {
+            logger.error("Exception: {}", e);
+            e.printStackTrace();
         }
 
         // Only handle if exchange is 'btsp'
+        /*
         if(stoxygenConfig.getExchange().equals("btsp")) {
             Exchange exchange = exchangeRepository.findBySymbol(stoxygenConfig.getExchange());
             pusherService.setExchange(exchange);
@@ -277,7 +277,7 @@ public class Worker {
                 pusherService.addSubscription(channel_str, "trade");
             });
         }
-
+        */
     }
 
 }

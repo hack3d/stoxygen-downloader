@@ -1,0 +1,13 @@
+{
+    "Servers": {
+      "1": {
+        "Name": "stoxygen-downloader",
+        "Group": "Server Group 1",
+        "Port": 5432,
+        "Username": "sto2-downloader",
+        "Host": "sto2-psql",
+        "SSLMode": "prefer",
+        "MaintenanceDB": "sto2_downloader"
+      }
+    }
+  }
