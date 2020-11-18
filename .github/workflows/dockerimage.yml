@@ -61,7 +61,7 @@ jobs:
     lint-docker:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkou@v2
+            - uses: actions/checkout@v2
             - name: Hadolint dockerfile
               uses: brpaz/hadolint-action@master
               with:
@@ -70,6 +70,7 @@ jobs:
         needs: [build-jar, lint-docker]
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/checkout@v2
             - name: Download artifact
               uses: actions/download-artifact@v2
               with:
