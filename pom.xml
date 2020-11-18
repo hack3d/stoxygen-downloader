@@ -6,7 +6,7 @@
 
     <groupId>de.stoxygen.downloader</groupId>
     <artifactId>stoxygen-downloader</artifactId>
-    <version>${projectVersion}</version>
+    <version>0.0.4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Stoxygen-Downloader</name>
@@ -134,26 +134,6 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>test</id>
-            <properties>
-                <projectVersion>0.0.4-TEST</projectVersion>
-            </properties>
-        </profile>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <projectVersion>0.0.4-SNAPSHOT</projectVersion>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <projectVersion>0.0.4</projectVersion>
-            </properties>
-        </profile>
-    </profiles>
     <repositories>
         <repository>
             <id>spring-releases</id>
