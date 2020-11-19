@@ -2,5 +2,5 @@ FROM arm32v7/adtopopenjdk:11.0.9_11-jre-hotspot
 
 LABEL maintainer="hack3d.dev@googlemail.com"
 
-COPY staging/stoxygen-downloader*.jar /app.jar
+COPY stoxygen-downloader*.jar /app.jar
 CMD ["/usr/bin/java", "-jar", "/app.jar"]
