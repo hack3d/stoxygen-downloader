@@ -111,4 +111,4 @@ jobs:
                 --platform linux/arm/v7 \
                 --output "type=image,push=false" \
                 --tag stockanaylses/downloader:latest \
-                --file Dockerfile.am32v7 .
+                --file Dockerfile.arm32v7 .
