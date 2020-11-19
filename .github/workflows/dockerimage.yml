@@ -75,6 +75,8 @@ jobs:
               uses: actions/download-artifact@v2
               with:
                 name: Package
+            - name: Show folder
+              run: ls -l 
             - name: Set up Docker Buildx
               id: buildx
               uses: crazy-max/ghaction-docker-buildx@v1
